@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+
+body {
+  background-color: rebeccapurple;
+  color: white;
+  font-family: system-ui;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Tailwind INFO */
+/* 
+https://tailwindcss.com/docs/installation/tailwind-cli 
+*/
