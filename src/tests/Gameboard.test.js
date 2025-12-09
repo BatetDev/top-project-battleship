@@ -61,4 +61,15 @@ describe('Gameboard', () => {
     const placed = gameboard.placeShip(ship, [0, 7], 'horizontal');
     expect(placed).toBe(true);
   });
+
+  test('places a ship vertically at coordinates', () => {
+    const ship = new Ship(3);
+    const placed = gameboard.placeShip(ship, [0, 0], 'vertical');
+
+    expect(placed).toBe(true);
+    expect(gameboard.board[0][0]).toBe(ship);
+    expect(gameboard.board[1][0]).toBe(ship);
+    expect(gameboard.board[2][0]).toBe(ship);
+    expect(gameboard.board[3][0]).toBe(null);
+  });
 });

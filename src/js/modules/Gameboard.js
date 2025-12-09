@@ -5,26 +5,34 @@ export default class Gameboard {
       .map(() => Array(10).fill(null)); // Replace each null with NEW array of 10 nulls
   }
 
+  // Helper method to check if coordinates are within bounds
+  _isWithinBounds(row, col) {
+    return row >= 0 && row < 10 && col >= 0 && col < 10;
+  }
+
   placeShip(ship, [row, col], orientation) {
+    if (!this._isWithinBounds(row, col)) {
+      return false;
+    }
+
     if (orientation === 'horizontal') {
-      // Check if ship fits within board bound (cols 0-9)
-      if (row < 0 || row > 9 || col < 0 || col > 9) {
-        return false; // Starting coordinate out of bounds
-      }
+      if (col + ship.length > 10) return false;
 
-      if (orientation === 'horizontal') {
-        if (col + ship.length > 10) {
-          return false; // Would extend beyond right edge;
-        }
-
-        // Place ship horizontally
-        for (let i = 0; i < ship.length; i++) {
-          this.board[row][col + i] = ship;
-        }
+      for (let i = 0; i < ship.length; i++) {
+        this.board[row][col + i] = ship;
       }
       return true;
     }
-    // TODO: handle vertical
+
+    if (orientation === 'vertical') {
+      if (row + ship.length > 10) return false;
+
+      for (let i = 0; i < ship.length; i++) {
+        this.board[row + i][col] = ship;
+      }
+      return true;
+    }
+
     return false;
   }
 }
