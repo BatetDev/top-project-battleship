@@ -1,3 +1,5 @@
+import Ship from './Ship';
+
 export default class Gameboard {
   constructor() {
     this.board = Array(10) // Create array with 10 empty slots
@@ -61,5 +63,17 @@ export default class Gameboard {
     }
 
     return true;
+  }
+
+  receiveAttack([row, col]) {
+    // Check if there's a ship at the coordinates
+    const target = this.board[row][col];
+
+    if (target instanceof Ship) {
+      target.hit();
+      return 'hit';
+    }
+
+    return 'miss';
   }
 }

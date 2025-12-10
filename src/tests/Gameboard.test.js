@@ -90,4 +90,14 @@ describe('Gameboard', () => {
     expect(gameboard.board[0][1]).toBe(ship1);
     expect(gameboard.board[0][2]).toBe(ship1);
   });
+
+  test('receiveAttack hits a ship at given coordinates', () => {
+    const ship = new Ship(3);
+    gameboard.placeShip(ship, [0, 0], 'horizontal');
+
+    const result = gameboard.receiveAttack([0, 0]);
+
+    expect(result).toBe('hit');
+    expect(ship.hits).toBe(1);
+  });
 });
