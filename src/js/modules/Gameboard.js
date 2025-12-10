@@ -10,29 +10,56 @@ export default class Gameboard {
     return row >= 0 && row < 10 && col >= 0 && col < 10;
   }
 
+  // Helper that returns all coordinates a ship would occupy
+  _getShipCoordinates(row, col, orientation, length) {
+    const coordinates = [];
+
+    if (orientation === 'horizontal') {
+      for (let i = 0; i < length; i++) {
+        coordinates.push([row, col + i]);
+      }
+    } else if (orientation === 'vertical') {
+      for (let i = 0; i < length; i++) {
+        coordinates.push([row + i, col]);
+      }
+    }
+
+    return coordinates;
+  }
+
+  // Helper method to check if ship can be placed (bounds + overlap
+  _canPlaceShip(row, col, orientation, length) {
+    const coordinates = this._getShipCoordinates(row, col, orientation, length);
+
+    // Check each coordinate
+    for (const [r, c] of coordinates) {
+      // Check if within bounds
+      if (!this._isWithinBounds(r, c)) return false;
+
+      // Check if cell is occuppied
+      if (this.board[r][c] !== null) return false;
+    }
+
+    return true;
+  }
+
   placeShip(ship, [row, col], orientation) {
-    if (!this._isWithinBounds(row, col)) {
+    // Check if we can place the ship
+    if (!this._canPlaceShip(row, col, orientation, ship.length)) {
       return false;
     }
 
-    if (orientation === 'horizontal') {
-      if (col + ship.length > 10) return false;
-
-      for (let i = 0; i < ship.length; i++) {
-        this.board[row][col + i] = ship;
-      }
-      return true;
+    // Get coordinates and place the ship
+    const coordinates = this._getShipCoordinates(
+      row,
+      col,
+      orientation,
+      ship.length
+    );
+    for (const [r, c] of coordinates) {
+      this.board[r][c] = ship;
     }
 
-    if (orientation === 'vertical') {
-      if (row + ship.length > 10) return false;
-
-      for (let i = 0; i < ship.length; i++) {
-        this.board[row + i][col] = ship;
-      }
-      return true;
-    }
-
-    return false;
+    return true;
   }
 }

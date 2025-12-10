@@ -72,4 +72,22 @@ describe('Gameboard', () => {
     expect(gameboard.board[2][0]).toBe(ship);
     expect(gameboard.board[3][0]).toBe(null);
   });
+
+  test('prevents placing ships that overlap', () => {
+    const ship1 = new Ship(3);
+    const ship2 = new Ship(3);
+
+    // Place first ship horizontally at [0,0]
+    gameboard.placeShip(ship1, [0, 0], 'horizontal');
+
+    // Try to place second ship vertically at [0,0] - should overlap
+    const placed = gameboard.placeShip(ship2, [0, 0], 'vertical');
+
+    expect(placed).toBe(false); // Should fail due to overlap
+
+    // Verify first ship is still in place
+    expect(gameboard.board[0][0]).toBe(ship1);
+    expect(gameboard.board[0][1]).toBe(ship1);
+    expect(gameboard.board[0][2]).toBe(ship1);
+  });
 });
