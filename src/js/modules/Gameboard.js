@@ -5,6 +5,9 @@ export default class Gameboard {
     this.board = Array(10) // Create array with 10 empty slots
       .fill(null) // Fill all 10 slots with null
       .map(() => Array(10).fill(null)); // Replace each null with NEW array of 10 nulls
+    this.missedAttacks = [];
+    this.attackedCells = [];
+    this.ships = [];
   }
 
   // Helper method to check if coordinates are within bounds
@@ -62,10 +65,24 @@ export default class Gameboard {
       this.board[r][c] = ship;
     }
 
+    this.ships.push(ship);
     return true;
   }
 
   receiveAttack([row, col]) {
+    // Check if attack coordinates are within bounds
+    if (!this._isWithinBounds(row, col)) return 'invalid';
+
+    // Check if already attacked
+    const alreadyAttacked = this.attackedCells.some(
+      ([r, c]) => r === row && c === col
+    );
+
+    if (alreadyAttacked) return 'already attacked';
+
+    // Record this attack
+    this.attackedCells.push([row, col]);
+
     // Check if there's a ship at the coordinates
     const target = this.board[row][col];
 
@@ -74,6 +91,16 @@ export default class Gameboard {
       return 'hit';
     }
 
+    // Record missed attack
+    this.missedAttacks.push([row, col]);
     return 'miss';
+  }
+
+  allShipsSunk() {
+    // If no ships are placed, they can't be sunk
+    if (this.ships.length === 0) return false;
+
+    // Check if every ship is sunk
+    return this.ships.every((ship) => ship.isSunk());
   }
 }
