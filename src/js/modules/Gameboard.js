@@ -103,4 +103,12 @@ export default class Gameboard {
     // Check if every ship is sunk
     return this.ships.every((ship) => ship.isSunk());
   }
+
+  isLegalAttack([row, col]) {
+    // Check if within bounds and not already attacked
+    return (
+      this._isWithinBounds(row, col) &&
+      !this.attackedCells.some(([r, c]) => r === row && c === col)
+    );
+  }
 }

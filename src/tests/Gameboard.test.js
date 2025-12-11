@@ -139,6 +139,21 @@ describe('Gameboard', () => {
         expect(result).toBe('invalid');
       });
     });
+
+    describe('isLegalAttack', () => {
+      test('returns true for a legal attack on empty cell', () => {
+        expect(gameboard.isLegalAttack([0, 0])).toBe(true);
+      });
+
+      test('returns false for out of bounds attack', () => {
+        expect(gameboard.isLegalAttack([10, 0])).toBe(false);
+      });
+
+      test('returns false for already attacked cell', () => {
+        gameboard.receiveAttack([0, 0]); // Attack first
+        expect(gameboard.isLegalAttack([0, 0])).toBe(false);
+      });
+    });
   });
 
   // Group 4: Game State
