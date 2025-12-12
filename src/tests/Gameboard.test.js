@@ -107,6 +107,17 @@ describe('Gameboard', () => {
         expect(ship.hits).toBe(1);
       });
 
+      test('returns "sunk" when ship is completely hit', () => {
+        //  Hit all but one part of ship
+        gameboard.receiveAttack([0, 0]);
+        gameboard.receiveAttack([0, 1]);
+
+        // Final hit should return 'sunk'
+        const result = gameboard.receiveAttack([0, 2]);
+        expect(result).toBe('sunk');
+        expect(ship.isSunk()).toBe(true);
+      });
+
       test('prevents attacking same spot twice', () => {
         gameboard.receiveAttack([0, 0]);
         const secondResult = gameboard.receiveAttack([0, 0]);

@@ -88,6 +88,12 @@ export default class Gameboard {
 
     if (target instanceof Ship) {
       target.hit();
+
+      // Check if this hit sank the ship
+      if (target.isSunk()) {
+        return 'sunk';
+      }
+
       return 'hit';
     }
 
