@@ -6,6 +6,9 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js --open",
+    "tailwind:build": "tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css",
+    "tailwind:watch": "tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch",
+    "dev": "concurrently \"npm run tailwind:watch\" \"npm start\"",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "format": "prettier --write .",
@@ -22,8 +25,10 @@
     "@babel/preset-env": "^7.28.5",
     "@eslint/js": "^9.26.0",
     "@types/jest": "^30.0.0",
+    "autoprefixer": "^10.4.22",
     "babel-jest": "^30.2.0",
     "babel-loader": "^10.0.0",
+    "concurrently": "^9.2.1",
     "css-loader": "^7.1.2",
     "eslint": "^9.26.0",
     "eslint-config-prettier": "^10.1.5",
@@ -33,16 +38,17 @@
     "html-webpack-plugin": "^5.6.3",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
+    "postcss": "^8.5.6",
+    "postcss-loader": "^8.2.0",
     "prettier": "^3.5.3",
     "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.19",
     "webpack": "^5.99.8",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.1",
     "webpack-merge": "^6.0.1"
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.1.6",
-    "lucide": "^0.510.0",
-    "tailwindcss": "^4.1.6"
+    "lucide": "^0.510.0"
   }
 }

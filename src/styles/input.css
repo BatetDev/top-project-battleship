@@ -1,5 +1,8 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* Your custom styles below */
 body {
   background-color: rebeccapurple;
   color: white;
@@ -7,8 +10,3 @@ body {
   text-align: center;
   padding: 20px;
 }
-
-/* Tailwind INFO */
-/* 
-https://tailwindcss.com/docs/installation/tailwind-cli 
-*/
