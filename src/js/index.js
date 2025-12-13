@@ -20,7 +20,7 @@ greetBabel('World');
 const iconSpan = document.getElementById('icon');
 if (iconSpan) {
   iconSpan.innerHTML =
-    '<i data-lucide="landmark" width="40" height="40" class="inline"></i>';
+    '<i data-lucide="ship-wheel" width="40" height="40" class="inline"></i>';
   createIcons({ icons });
 } else {
   console.warn('No element with id="icon" found.');
