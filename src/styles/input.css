@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Your custom styles below */
 body {
   background-color: rebeccapurple;
   color: white;

@@ -576,11 +576,14 @@ video {
   color: rgb(110 231 183 / var(--tw-text-opacity, 1));
 }
 
+.text-red-300 {
+  --tw-text-opacity: 1;
+  color: rgb(252 165 165 / var(--tw-text-opacity, 1));
+}
+
 .underline {
   text-decoration-line: underline;
 }
-
-/* Your custom styles below */
 
 body {
   background-color: rebeccapurple;
