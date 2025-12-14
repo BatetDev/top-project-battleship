@@ -9,21 +9,18 @@ window.Game = Game;
 window.game = new Game();
 window.ui = new UIManager(window.game);
 
-console.log('Battleship UI loaded');
-console.log('Type "ui.startGame()" in console to test UI');
+console.log('Battleship UI loaded!');
+console.log('Type "ui.startGame()" to begin a UI game.');
+console.log('Then use the UI to make moves.');
 
-console.log('Battleship loaded!');
-console.log('Type "game.startConsoleGame()" to begin a console game.');
-console.log('Then use "game.humanTurn(row, col)" to make moves.');
-console.log('Example: game.humanTurn(5, 5)');
-
+// Initialize Lucide icons
 const iconSpan = document.getElementById('icon');
 if (iconSpan) {
   iconSpan.innerHTML =
-    '<i data-lucide="ship-wheel" width="40" height="40" class="inline"></i>';
-  createIcons({ icons });
-} else {
-  console.warn('No element with id="icon" found.');
+    '<i data-lucide="anchor" width="40" height="40" class="inline"></i>';
 }
 
 createIcons({ icons });
+
+// Auto-start the UI game
+window.ui.startGame();

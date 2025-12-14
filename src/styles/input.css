@@ -2,43 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    font-family: 'Cinzel', serif;
+  }
+}
+
 @layer components {
   .cell {
-    @apply aspect-square border-2 border-amber-800/40 rounded-lg flex items-center justify-center text-lg font-bold transition-all duration-200 cursor-pointer;
+    @apply aspect-square border-2 border-amber-800/30 rounded flex items-center justify-center text-lg font-bold transition-all duration-300 cursor-pointer min-w-[35px] min-h-[35px] shadow-inner;
   }
 
-  .cell:hover {
-    @apply transform scale-105 border-amber-600/60 shadow-lg;
+  .cell:hover:not(.cell-disabled) {
+    @apply border-amber-500/60 shadow-md transform scale-[1.03];
   }
 
   /* Cell States */
   .cell-empty {
-    @apply bg-gray-800/60 hover:bg-gray-700/80;
+    @apply bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-gray-400;
   }
 
   .cell-ship {
-    @apply bg-cyan-900/40 border-cyan-600/50;
+    @apply bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-gray-400;
   }
 
   .cell-hit {
-    @apply bg-red-600/80 border-red-800 text-white;
+    @apply bg-gradient-to-br from-red-700 to-red-800 border-red-800 text-white shadow-lg animate-pulse;
   }
 
   .cell-miss {
-    @apply bg-gray-600/70 border-gray-500 text-gray-300;
+    @apply bg-gradient-to-br from-gray-600 to-gray-700 border-gray-500 text-gray-300;
   }
 
   .cell-sunk {
-    @apply bg-red-800 border-red-900 text-white;
+    @apply bg-gradient-to-br from-red-800 to-red-900 border-red-900 text-white shadow-xl animate-pulse;
   }
 
   .cell-disabled {
-    @apply opacity-50 cursor-not-allowed hover:transform-none;
+    @apply opacity-60 cursor-not-allowed hover:transform-none hover:shadow-inner;
   }
 }
 
+/* Body styling */
 body {
-  background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #7c2d12 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #451a03 100%);
   min-height: 100vh;
-  font-family: system-ui;
+  margin: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #92400e;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b45309;
 }
