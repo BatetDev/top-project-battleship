@@ -7,6 +7,6 @@ module.exports = merge(common, {
   devServer: {
     static: './dist',
     hot: true,
-    watchFiles: ['./src/template.html', './src/**/*.html', './src/**/*.js', './src/styles/input.css'],
+    watchFiles: ['./src/index.html'],
   },
 });
