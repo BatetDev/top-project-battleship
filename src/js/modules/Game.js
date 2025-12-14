@@ -1,7 +1,7 @@
 import Player from './Player';
 import Ship from './Ship';
 
-export default class ConsoleGame {
+export default class Game {
   constructor() {
     // Create two players: one human, one computer
     this.human = new Player(false); // false = not a computer
@@ -28,7 +28,7 @@ export default class ConsoleGame {
   // Random ship placement for computer
   placeComputerShips() {
     // Get the standard fleet of 5 ships
-    const fleet = ConsoleGame.createStandardFleet();
+    const fleet = Game.createStandardFleet();
 
     // For each ship in the fleet...
     fleet.forEach((ship) => {
@@ -60,7 +60,7 @@ export default class ConsoleGame {
   // Ship placement for human (random too for now)
   placeHumanShips() {
     // get the standard fleet of 5 ships
-    const fleet = ConsoleGame.createStandardFleet();
+    const fleet = Game.createStandardFleet();
 
     // For each ship in the fleet
     fleet.forEach((ship) => {
@@ -217,7 +217,7 @@ export default class ConsoleGame {
   }
 
   // Start a console-based game
-  startConsoleGame() {
+  startGame() {
     console.log('=== BATTLESHIP CONSOLE GAME ===');
 
     // Place ships for both players

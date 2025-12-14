@@ -730,12 +730,12 @@ video {
   text-align: center;
 }
 
-.font-serif {
-  font-family: Cinzel, serif;
-}
-
 .font-display {
   font-family: Orbitron, sans-serif;
+}
+
+.font-serif {
+  font-family: Cinzel, serif;
 }
 
 .text-2xl {
