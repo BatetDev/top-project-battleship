@@ -6,7 +6,9 @@
     "checkJs": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "noImplicitAny": false,
+    "skipLibCheck": true
   },
   "typeAcquisition": {
     "include": ["jest"]

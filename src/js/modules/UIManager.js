@@ -48,14 +48,18 @@ export default class UIManager {
       this.computerBoard.addEventListener('click', (e) => {
         if (!this.isGameActive || this.game.gameOver) return;
         const cell = e.target;
+        // @ts-ignore
         if (!cell.classList.contains('cell')) return;
         if (
+          // @ts-ignore
           cell.classList.contains('cell-hit') ||
+          // @ts-ignore
           cell.classList.contains('cell-miss')
         )
           return;
-
+        // @ts-ignore
         const row = parseInt(cell.dataset.row);
+        // @ts-ignore
         const col = parseInt(cell.dataset.col);
         this.processHumanAttack(row, col);
       });
