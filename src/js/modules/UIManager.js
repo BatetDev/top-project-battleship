@@ -29,6 +29,23 @@ export default class UIManager {
     } else {
       console.log('New game button not found!');
     }
+
+    if (this.computerBoard) {
+      this.computerBoard.addEventListener('click', (e) => {
+        if (!this.isGameActive || this.game.gameOver) return;
+        const cell = e.target;
+        if (!cell.classList.contains('cell')) return;
+        if (
+          cell.classList.contains('cell-hit') ||
+          cell.classList.contains('cell-miss')
+        )
+          return;
+
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+        this.processHumanAttack(row, col);
+      });
+    }
   }
 
   // Start the UI game
@@ -54,7 +71,7 @@ export default class UIManager {
     console.log('Human ships placed (randomly)');
     console.log('Computer ships placed (randomly)');
   }
-
+  c;
   // Render empty boards with grid cells
   renderInitialBoards() {
     this.renderBoard(this.humanBoard, this.game.human.gameboard, true); // Human board shows ships
@@ -112,6 +129,32 @@ export default class UIManager {
   updateGameMessage(message) {
     if (this.gameMessage) {
       this.gameMessage.textContent = message;
+    }
+  }
+
+  processHumanAttack(row, col) {
+    const result = this.game.humanTurn(row, col);
+
+    // Check if attack was successful
+    if (!result.success) {
+      console.log('Attack failed:', result.message);
+      this.updateGameMessage(`Invalid: ${result.message}`);
+      return;
+    }
+
+    // Update board and message
+    this.renderBoard(this.computerBoard, this.game.computer.gameboard, false);
+
+    // Safely get result text
+    const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
+    this.updateGameMessage(`Attack [${row},${col}]: ${resultText}`);
+
+    // Check for game over
+    if (result.gameOver) {
+      this.updateGameMessage(
+        result.winner === 'human' ? 'VICTORY!' : 'DEFEAT!'
+      );
+      this.isGameActive = false;
     }
   }
 }
