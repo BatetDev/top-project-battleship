@@ -71,7 +71,7 @@ export default class UIManager {
     console.log('Human ships placed (randomly)');
     console.log('Computer ships placed (randomly)');
   }
-  c;
+
   // Render empty boards with grid cells
   renderInitialBoards() {
     this.renderBoard(this.humanBoard, this.game.human.gameboard, true); // Human board shows ships
@@ -100,8 +100,14 @@ export default class UIManager {
         // Determine the cell state based on gameboard data
         if (attacked && cellContent) {
           // Hit a ship
-          cell.className = 'cell cell-hit';
-          cell.textContent = '✖';
+          const ship = cellContent;
+          if (ship.isSunk()) {
+            cell.className = 'cell cell-sunk';
+            cell.textContent = '💥';
+          } else {
+            cell.className = 'cell cell-hit';
+            cell.textContent = '✖';
+          }
         } else if (attacked && !cellContent) {
           // Miss
           cell.className = 'cell cell-miss';
@@ -119,7 +125,7 @@ export default class UIManager {
         container.appendChild(cell);
       }
 
-      console.log('Rendered ${container.id} with gameboard data');
+      console.log(`Rendered ${container.id} with gameboard data`);
     }
 
     console.log(`Rendered ${container.id} with 100 cells`);
@@ -133,28 +139,99 @@ export default class UIManager {
   }
 
   processHumanAttack(row, col) {
+    // Step 1: Basic validation
+    if (!this.isGameActive || this.game.gameOver) {
+      this.updateGameMessage('Game is not active or has ended!');
+      return;
+    }
+
+    // Step 2: Check if it's actually human's turn
+    if (this.game.currentPlayer !== this.game.human) {
+      this.updateGameMessage("Not your turn! Wait for computer's move.");
+      return;
+    }
+
+    // Step 3: Execute human turn
     const result = this.game.humanTurn(row, col);
 
-    // Check if attack was successful
+    // Step 4: Check if attack was succesful
     if (!result.success) {
       console.log('Attack failed:', result.message);
       this.updateGameMessage(`Invalid: ${result.message}`);
       return;
     }
 
-    // Update board and message
+    // Step 5: Update computer board to show the attack
     this.renderBoard(this.computerBoard, this.game.computer.gameboard, false);
 
-    // Safely get result text
+    // Step 6: Update game message
     const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
-    this.updateGameMessage(`Attack [${row},${col}]: ${resultText}`);
+    this.updateGameMessage(`Your attack [${row},${col}]: ${resultText}`);
 
-    // Check for game over
-    if (result.gameOver) {
-      this.updateGameMessage(
-        result.winner === 'human' ? 'VICTORY!' : 'DEFEAT!'
-      );
+    // Step 7: Check if human won
+    if (result.gameOver && result.winner === 'human') {
+      this.updateGameMessage(`🎉 VICTORY! All enemy ships sunk!`);
       this.isGameActive = false;
+      // Reveal all computer ships at game end
+      this.renderBoard(this.computerBoard, this.game.computer.gameboard, true);
+      return;
     }
+
+    // Step 8: If game continues, trigger computer turn after a short delay
+    if (!result.gameOver) {
+      // Update message to indicate computer is about to play
+      this.updateGameMessage(
+        `Your attack [${row},${col}]: ${resultText}. Computer's turn...`
+      );
+
+      // Wait 1 second, then trigger computer turn (for better UX)
+      setTimeout(() => {
+        this.processComputerTurn();
+      }, 1000); // 1 sec delay
+    }
+  }
+
+  processComputerTurn() {
+    // Step 1: Basic validation
+    if (!this.isGameActive || this.game.gameOver) {
+      console.log('Computer turn: Game is not active or has ended');
+      return;
+    }
+
+    // Step 2: Check if it's actually computer's turn
+    if (this.game.currentPlayer !== this.game.computer) {
+      console.log("Computer turn: Not computer's turn");
+      return;
+    }
+
+    // Step 3: Execute computer turn
+    const result = this.game.computerTurn();
+
+    console.log('Computer turn result:', result);
+
+    // Step 4: Check if computer turn was succesful
+    if (!result.success) {
+      console.log('Computer turn failed:', result.message);
+      this.updateGameMessage(`Computer error: ${result.message}`);
+      return;
+    }
+
+    // Step 5: Update human board to show computer's attack
+    this.renderBoard(this.humanBoard, this.game.human.gameboard, true);
+
+    // Step 6: Update game message
+    const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
+    this.updateGameMessage(`Computer attacked: ${resultText}`);
+
+    // Step 7: Check if computer won
+    if (result.gameOver && result.winner === 'computer') {
+      this.updateGameMessage('💀 DEFEAT! All your ships are sunk!');
+      this.isGameActive = false;
+      return;
+    }
+
+    // Step 8: If game continues, it's now human's turn again
+    // The game.computerTurn() method already switched currentPlayer back to human
+    this.updateGameMessage('Your turn! Click an enemy cell.');
   }
 }
