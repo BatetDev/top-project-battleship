@@ -13,6 +13,10 @@ export default class UIManager {
     this.computerBoard = document.getElementById('computer-board');
     this.gameMessage = document.getElementById('game-message');
     this.newGameBtn = document.getElementById('new-game-btn');
+    this.gameOverModal = document.getElementById('game-over-modal');
+    this.gameOverTitle = document.getElementById('game-over-title');
+    this.gameOverMessage = document.getElementById('game-over-message');
+    this.playAgainBtn = document.getElementById('play-again-btn');
 
     if (!this.humanBoard || !this.computerBoard) {
       console.error('Could not find board containers! Check HTML ids.');
@@ -20,14 +24,24 @@ export default class UIManager {
   }
 
   setupEventListeners() {
-    // Add click listener to the New Game button
+    // Add click listener to the main New Game button (DEPLOY FLEET)
     if (this.newGameBtn) {
       this.newGameBtn.addEventListener('click', () => {
         console.log('DEPLOY FLEET button clicked!');
         this.startGame();
+        this.hideGameOverModal(); // Hide modal if visible
       });
     } else {
       console.log('New game button not found!');
+    }
+
+    // Add click listener to the Play Again button in modal
+    if (this.playAgainBtn) {
+      this.playAgainBtn.addEventListener('click', () => {
+        console.log('PLAY AGAIN button clicked!');
+        this.startGame();
+        this.hideGameOverModal();
+      });
     }
 
     if (this.computerBoard) {
@@ -138,6 +152,21 @@ export default class UIManager {
     }
   }
 
+  // Show/hide game over modal
+  showGameOverModal(title, message) {
+    if (this.gameOverModal && this.gameOverTitle && this.gameOverMessage) {
+      this.gameOverTitle.textContent = title;
+      this.gameOverMessage.textContent = message;
+      this.gameOverModal.classList.remove('hidden');
+    }
+  }
+
+  hideGameOverModal() {
+    if (this.gameOverModal) {
+      this.gameOverModal.classList.add('hidden');
+    }
+  }
+
   processHumanAttack(row, col) {
     // Step 1: Basic validation
     if (!this.isGameActive || this.game.gameOver) {
@@ -170,10 +199,17 @@ export default class UIManager {
 
     // Step 7: Check if human won
     if (result.gameOver && result.winner === 'human') {
-      this.updateGameMessage(`🎉 VICTORY! All enemy ships sunk!`);
+      console.log('Human won the game!');
+      this.updateGameMessage('🎉 VICTORY! All enemy ships sunk!');
       this.isGameActive = false;
       // Reveal all computer ships at game end
       this.renderBoard(this.computerBoard, this.game.computer.gameboard, true);
+
+      // Show game over modal
+      this.showGameOverModal(
+        'VICTORY! 🎉',
+        'Congratulations! You sank all enemy ships and conquered the skies!'
+      );
       return;
     }
 
@@ -225,8 +261,15 @@ export default class UIManager {
 
     // Step 7: Check if computer won
     if (result.gameOver && result.winner === 'computer') {
+      console.log('Computer won the game!');
       this.updateGameMessage('💀 DEFEAT! All your ships are sunk!');
       this.isGameActive = false;
+
+      // Show game over modal
+      this.showGameOverModal(
+        'DEFEAT! 💀',
+        'The enemy fleet has overwhelmed your defenses. All your ships have been sunk!'
+      );
       return;
     }
 
