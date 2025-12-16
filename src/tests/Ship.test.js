@@ -39,19 +39,20 @@ describe('Ship', () => {
     expect(ship2.isSunk()).toBe(true);
   });
 
-  test('isSunk() returns true when hits > length', () => {
-    const ship2 = new Ship(2);
-    ship2.hit();
-    ship2.hit();
-    ship2.hit(); // 3 hits, length 2
-    expect(ship2.isSunk()).toBe(true);
-  });
-
   test('cannot hit a sunken ship', () => {
     const ship2 = new Ship(2);
     ship2.hit();
     ship2.hit(); // Ship is now sunk
     ship2.hit(); // Try to hit again
     expect(ship2.hits).toBe(2); // Should still be 2, not 3
+  });
+
+  test('hit() does nothing when ship is already sunk', () => {
+    const ship = new Ship(2);
+    ship.hit();
+    ship.hit(); // Ship is sunk
+    ship.hit(); // This should not increase hits
+    expect(ship.hits).toBe(2);
+    expect(ship.isSunk()).toBe(true);
   });
 });
