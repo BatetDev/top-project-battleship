@@ -4,6 +4,14 @@ export default class Player {
   constructor(isComputer = false) {
     this.isComputer = isComputer;
     this.gameboard = new Gameboard();
+
+    // AI state
+    if (this.isComputer) {
+      this.aiMode = 'HUNT'; // 'HUNT'(random) or 'TARGET'(adjacent cells)
+      this.targetQueue = []; // BFS queue of [row, col] to attack next
+      this.lastHit = null; // [row, col] of last successful hit
+      this.hitsInCurrentTarget = []; // Array of hits for current targeted ship
+    }
   }
 
   // Forwards attack to enemy's gameboard and returns result
