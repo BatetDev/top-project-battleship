@@ -14,6 +14,43 @@ export default class Player {
     }
   }
 
+  // Helper to get valid adjacent cells (N, S, E, W)
+  _getAdjacentCells(row, col, gameboard) {
+    const adjacent = [];
+    const directions = [
+      [-1, 0], // Up
+      [1, 0], // Down
+      [0, -1], // Left
+      [0, 1], // Right
+    ];
+
+    for (const [dr, dc] of directions) {
+      const newRow = row + dr;
+      const newCol = col + dc;
+
+      // Check legality (bounds and if already attacked)
+      if (gameboard.isLegalAttack([newRow, newCol])) {
+        adjacent.push([newRow, newCol]);
+      }
+    }
+
+    return adjacent;
+  }
+
+  // Helper to add unique cells to queue (no duplicates)
+  _addToQueue(cells) {
+    for (const cell of cells) {
+      // Check if already in queue
+      const alreadyInQueue = this.targetQueue.some(
+        ([r, c]) => r === cell[0] && c === cell[1]
+      );
+
+      if (!alreadyInQueue) {
+        this.targetQueue.push(cell);
+      }
+    }
+  }
+
   // Forwards attack to enemy's gameboard and returns result
   attack(coordinates, enemyGameboard) {
     return enemyGameboard.receiveAttack(coordinates);
