@@ -136,7 +136,7 @@ export default class Game {
     }
 
     // Execute attack
-    const result = this.computer.makeRandomAttack(this.human.gameboard);
+    const result = this.computer.makeComputerAttack(this.human.gameboard);
 
     // Log for console version
     console.log("\n=== COMPUTER'S ATTACK ===");

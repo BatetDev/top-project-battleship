@@ -49,7 +49,7 @@ describe('computer player', () => {
     const randomSpy = jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
 
     // 4. Call the method we're testing
-    const result = computer.makeRandomAttack(enemyGameboard);
+    const result = computer.makeComputerAttack(enemyGameboard);
 
     // 5. Check that [5, 5] was attacked
     expect(enemyGameboard.attackedCells).toContainEqual([5, 5]);
@@ -77,7 +77,7 @@ describe('computer player', () => {
       .spyOn(Math, 'random')
       .mockImplementation(() => randomReturns.shift());
 
-    const outcome = computer.makeRandomAttack(enemyBoard);
+    const outcome = computer.makeComputerAttack(enemyBoard);
 
     // Verify computer attacked [6,6] (legal), not [5,5] (illegal)
     expect(enemyBoard.attackedCells).toContainEqual([6, 6]);

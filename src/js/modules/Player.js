@@ -57,9 +57,9 @@ export default class Player {
   }
 
   // Returns a random legal attack on the enemy gameboard
-  makeRandomAttack(enemyGameboard) {
+  makeComputerAttack(enemyGameboard) {
     if (!this.isComputer) {
-      throw new Error('Only computer players can make random attacks');
+      throw new Error('Only computer players can make computer attacks');
     }
 
     let row, col;
