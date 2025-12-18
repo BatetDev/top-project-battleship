@@ -1,13 +1,21 @@
+// @ts-nocheck
+/**
+ * Manages all UI interactions for the Battleship game
+ * @param {Game} game - The game instance to control
+ */
 export default class UIManager {
   constructor(game) {
-    this.game = game;
-    this.isGameActive = false;
+    this.game = game; // Game logic instance
+    this.isGameActive = false; // Controls UI interactivity
+
+    // Initialize UI components
     this.setupBoardReferences();
     this.setupEventListeners();
+
     console.log('UIManager: Ready to render boards');
   }
 
-  // Get references to DOM elements
+  // Store DOM element references for easy access
   setupBoardReferences() {
     this.humanBoard = document.getElementById('human-board');
     this.computerBoard = document.getElementById('computer-board');
@@ -18,24 +26,25 @@ export default class UIManager {
     this.gameOverMessage = document.getElementById('game-over-message');
     this.playAgainBtn = document.getElementById('play-again-btn');
 
+    // Critical elements for game function
     if (!this.humanBoard || !this.computerBoard) {
-      console.error('Could not find board containers! Check HTML ids.');
+      console.error('Missing board containers. Check HTML IDs.');
     }
   }
 
   setupEventListeners() {
-    // Add click listener to the main New Game button (DEPLOY FLEET)
+    // Setup New Game button
     if (this.newGameBtn) {
       this.newGameBtn.addEventListener('click', () => {
         console.log('DEPLOY FLEET button clicked!');
         this.startGame();
-        this.hideGameOverModal(); // Hide modal if visible
+        this.hideGameOverModal();
       });
     } else {
-      console.log('New game button not found!');
+      console.warn('New Game button not found');
     }
 
-    // Add click listener to the Play Again button in modal
+    // Setup Play Again button (same functionality)
     if (this.playAgainBtn) {
       this.playAgainBtn.addEventListener('click', () => {
         console.log('PLAY AGAIN button clicked!');
@@ -44,23 +53,29 @@ export default class UIManager {
       });
     }
 
+    // Setup computer board for attack clicks
     if (this.computerBoard) {
       this.computerBoard.addEventListener('click', (e) => {
+        // Prevent clicks when game inactive or over
         if (!this.isGameActive || this.game.gameOver) return;
+
+        // Get clicked cell
         const cell = e.target;
-        // @ts-ignore
+
+        // Only handle clicks on unattacked cells
         if (!cell.classList.contains('cell')) return;
         if (
-          // @ts-ignore
           cell.classList.contains('cell-hit') ||
-          // @ts-ignore
           cell.classList.contains('cell-miss')
-        )
+        ) {
           return;
-        // @ts-ignore
+        }
+
+        // Extract coordinates from data attributes
         const row = parseInt(cell.dataset.row);
-        // @ts-ignore
         const col = parseInt(cell.dataset.col);
+
+        // Process the attack
         this.processHumanAttack(row, col);
       });
     }
@@ -70,54 +85,53 @@ export default class UIManager {
   startGame() {
     console.log('UIManager: Starting new game');
 
-    // Reset game state
-    this.game = new window.Game(); // Create a fresh game instance
+    // Create fresh game instance using globally available Game class
+    this.game = new window.Game();
     this.isGameActive = true;
 
-    // Place ships for both players
+    // Place ships randomly for both players
     this.game.placeHumanShips();
     this.game.placeComputerShips();
 
-    // Render boards with ships (human) and without (computer)
+    // Render boards:
+    // - Human board: show ships (true)
+    // - Computer board: hide ships (false)
     this.renderBoard(this.humanBoard, this.game.human.gameboard, true);
     this.renderBoard(this.computerBoard, this.game.computer.gameboard, false);
 
-    // Update game message
+    // Update UI message
     this.updateGameMessage('Fleets deployed! Your turn: Attack enemy cells.');
 
-    // Log for debugging
+    // Debug logging
     console.log('Human ships placed (randomly)');
     console.log('Computer ships placed (randomly)');
   }
 
-  // Render empty boards with grid cells
-  renderInitialBoards() {
-    this.renderBoard(this.humanBoard, this.game.human.gameboard, true); // Human board shows ships
-    this.renderBoard(this.computerBoard, this.game.computer.gameboard, false); // Computer board hides ships
-
-    this.updateGameMessage('Click "Start New Game" to deploy fleets!');
-  }
-
-  // Render a single 10×10 board
   renderBoard(container, gameboard, showShips) {
-    container.innerHTML = ''; // Clear existing content
+    // Clear the board container
+    container.innerHTML = '';
 
+    // Precompute attacked cells for O(1) lookup
+    const attackedSet = new Set(
+      gameboard.attackedCells.map(([r, c]) => `${r},${c}`)
+    );
+
+    // Create 10×10 grid (standard Battleship size)
     for (let row = 0; row < 10; row++) {
       for (let col = 0; col < 10; col++) {
+        // Create cell element with base styling
         const cell = document.createElement('div');
         cell.className = 'cell cell-empty';
-        cell.dataset.row = row.toString();
-        cell.dataset.col = col.toString();
+        cell.dataset.row = row;
+        cell.dataset.col = col;
 
-        // Get the cell content from gameboard
+        // Check cell state from gameboard
         const cellContent = gameboard.board[row][col];
-        const attacked = gameboard.attackedCells.some(
-          ([r, c]) => r === row && c === col
-        );
+        const attacked = attackedSet.has(`${row},${col}`);
 
-        // Determine the cell state based on gameboard data
+        // Apply visual state based on game data
         if (attacked && cellContent) {
-          // Hit a ship
+          // Hit on a ship
           const ship = cellContent;
           if (ship.isSunk()) {
             cell.className = 'cell cell-sunk';
@@ -127,26 +141,26 @@ export default class UIManager {
             cell.textContent = '✖';
           }
         } else if (attacked && !cellContent) {
-          // Miss
+          // Miss (attacked empty cell)
           cell.className = 'cell cell-miss';
           cell.textContent = '○';
         } else if (!attacked && cellContent && showShips) {
-          // Ship (only show if showShips is true)
+          // Healthy ship (only shown on player's own board)
           cell.className = 'cell cell-ship';
           cell.textContent = '■';
         } else {
-          // Empty cell or hidden ship
+          // Empty or hidden ship
           cell.className = 'cell cell-empty';
           cell.textContent = '.';
         }
 
+        // Add cell to the board
         container.appendChild(cell);
       }
-
-      console.log(`Rendered ${container.id} with gameboard data`);
     }
 
-    console.log(`Rendered ${container.id} with 100 cells`);
+    // Debug logging
+    console.log(`Rendered ${container.id}`);
   }
 
   // Update game message display
@@ -224,10 +238,10 @@ export default class UIManager {
         `Your attack [${row},${col}]: ${resultText}. Computer's turn...`
       );
 
-      // Wait 1 second, then trigger computer turn (for better UX)
+      // Wait 1.5 seconds, then trigger computer turn (for better UX)
       setTimeout(() => {
         this.processComputerTurn();
-      }, 1000); // 1 sec delay
+      }, 1500);
     }
   }
 

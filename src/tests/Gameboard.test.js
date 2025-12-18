@@ -17,6 +17,14 @@ describe('Gameboard', () => {
         expect(row.length).toBe(10);
       });
     });
+
+    test('initializes all board cells to null', () => {
+      gameboard.board.forEach((row) => {
+        row.forEach((cell) => {
+          expect(cell).toBeNull();
+        });
+      });
+    });
   });
 
   // Group 2: Ship Placement
@@ -36,6 +44,9 @@ describe('Gameboard', () => {
         const ship = new Ship(3);
         const placed = gameboard.placeShip(ship, [0, 7], 'horizontal');
         expect(placed).toBe(true);
+        expect(gameboard.board[0][7]).toBe(ship);
+        expect(gameboard.board[0][8]).toBe(ship);
+        expect(gameboard.board[0][9]).toBe(ship);
       });
     });
 
@@ -52,9 +63,24 @@ describe('Gameboard', () => {
     });
 
     describe('boundary validation', () => {
+      test('places ship exactly at bottom boundary', () => {
+        const ship = new Ship(3);
+        const placed = gameboard.placeShip(ship, [7, 0], 'vertical');
+        expect(placed).toBe(true);
+        expect(gameboard.board[7][0]).toBe(ship);
+        expect(gameboard.board[8][0]).toBe(ship);
+        expect(gameboard.board[9][0]).toBe(ship);
+      });
+
       test('does not place ship horizontally out of bounds', () => {
         const ship = new Ship(3);
         const placed = gameboard.placeShip(ship, [0, 8], 'horizontal');
+        expect(placed).toBe(false);
+      });
+
+      test('does not place ship vertically out of bounds', () => {
+        const ship = new Ship(3);
+        const placed = gameboard.placeShip(ship, [8, 0], 'vertical');
         expect(placed).toBe(false);
       });
 
@@ -87,6 +113,14 @@ describe('Gameboard', () => {
         expect(gameboard.board[0][0]).toBe(ship1);
         expect(gameboard.board[0][1]).toBe(ship1);
         expect(gameboard.board[0][2]).toBe(ship1);
+      });
+
+      test('prevents placing ships that partially overlap', () => {
+        const ship1 = new Ship(3);
+        const ship2 = new Ship(3);
+        gameboard.placeShip(ship1, [0, 0], 'horizontal');
+        const placed = gameboard.placeShip(ship2, [0, 1], 'vertical');
+        expect(placed).toBe(false);
       });
     });
   });
@@ -123,6 +157,13 @@ describe('Gameboard', () => {
         const secondResult = gameboard.receiveAttack([0, 0]);
         expect(secondResult).toBe('already attacked');
       });
+
+      test('records hit attacks in attackedCells array', () => {
+        const result = gameboard.receiveAttack([0, 0]);
+        expect(result).toBe('hit');
+        expect(gameboard.attackedCells).toContainEqual([0, 0]);
+        expect(gameboard.missedAttacks).not.toContainEqual([0, 0]);
+      });
     });
 
     describe('when no ship is present', () => {
@@ -135,6 +176,13 @@ describe('Gameboard', () => {
         const result = gameboard.receiveAttack([0, 0]);
         expect(result).toBe('miss');
         expect(gameboard.missedAttacks).toContainEqual([0, 0]);
+      });
+
+      test('records missed attacks in attackedCells array', () => {
+        const result = gameboard.receiveAttack([5, 5]);
+        expect(result).toBe('miss');
+        expect(gameboard.attackedCells).toContainEqual([5, 5]);
+        expect(gameboard.missedAttacks).toContainEqual([5, 5]);
       });
 
       test('prevents attacking same empty spot twice', () => {
@@ -156,12 +204,25 @@ describe('Gameboard', () => {
         expect(gameboard.isLegalAttack([0, 0])).toBe(true);
       });
 
+      test('returns true for legal attack on ship cell', () => {
+        const ship = new Ship(3);
+        gameboard.placeShip(ship, [0, 0], 'horizontal');
+        expect(gameboard.isLegalAttack([0, 0])).toBe(true);
+      });
+
       test('returns false for out of bounds attack', () => {
         expect(gameboard.isLegalAttack([10, 0])).toBe(false);
       });
 
       test('returns false for already attacked cell', () => {
-        gameboard.receiveAttack([0, 0]); // Attack first
+        gameboard.receiveAttack([0, 0]);
+        expect(gameboard.isLegalAttack([0, 0])).toBe(false);
+      });
+
+      test('returns false for already attacked ship cell', () => {
+        const ship = new Ship(3);
+        gameboard.placeShip(ship, [0, 0], 'horizontal');
+        gameboard.receiveAttack([0, 0]);
         expect(gameboard.isLegalAttack([0, 0])).toBe(false);
       });
     });
@@ -191,6 +252,10 @@ describe('Gameboard', () => {
         gameboard.receiveAttack([2, 0]);
         gameboard.receiveAttack([3, 0]);
         expect(gameboard.allShipsSunk()).toBe(true);
+      });
+
+      test('returns false when no ships are placed', () => {
+        expect(gameboard.allShipsSunk()).toBe(false);
       });
     });
   });

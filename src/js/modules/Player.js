@@ -6,11 +6,12 @@ export default class Player {
     this.gameboard = new Gameboard();
   }
 
+  // Forwards attack to enemy's gameboard and returns result
   attack(coordinates, enemyGameboard) {
-    // Forward attack to enemy's gameboard
     return enemyGameboard.receiveAttack(coordinates);
   }
 
+  // Returns a random legal attack on the enemy gameboard
   makeRandomAttack(enemyGameboard) {
     if (!this.isComputer) {
       throw new Error('Only computer players can make random attacks');

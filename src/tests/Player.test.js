@@ -1,4 +1,5 @@
 import Player from '../js/modules/Player';
+import Ship from '../js/modules/Ship';
 import Gameboard from '../js/modules/Gameboard';
 
 describe('Player', () => {
@@ -11,16 +12,26 @@ describe('Player', () => {
   test('player attack method forwards attack to enemy gameboard', () => {
     const player = new Player();
     const enemyGameboard = new Gameboard();
-
-    // Attack empty cell - should return 'miss'
     const result = player.attack([5, 5], enemyGameboard);
+    expect(result).toBe(Gameboard.ATTACK_RESULT.MISS);
+  });
 
-    expect(result).toBe('miss');
+  test('player attack returns hit when ship is present', () => {
+    const player = new Player();
+    const enemyGameboard = new Gameboard();
+    const ship = new Ship(3);
+
+    enemyGameboard.placeShip(ship, [0, 0], 'horizontal');
+    const result = player.attack([0, 0], enemyGameboard);
+
+    expect(result).toBe(Gameboard.ATTACK_RESULT.HIT);
+    expect(ship.hits).toBe(1);
   });
 
   test('creates a computer player when isComputer is true', () => {
     const computerPlayer = new Player(true);
     expect(computerPlayer.isComputer).toBe(true);
+    expect(computerPlayer.gameboard).toBeInstanceOf(Gameboard);
   });
 });
 
@@ -40,11 +51,14 @@ describe('computer player', () => {
     // 4. Call the method we're testing
     const result = computer.makeRandomAttack(enemyGameboard);
 
-    // 5. Check that [5, 5] was attacked (explained below)
+    // 5. Check that [5, 5] was attacked
     expect(enemyGameboard.attackedCells).toContainEqual([5, 5]);
 
     // 6. Check result is either 'hit' or 'miss'
-    expect(['hit', 'miss']).toContain(result);
+    expect([
+      Gameboard.ATTACK_RESULT.HIT,
+      Gameboard.ATTACK_RESULT.MISS,
+    ]).toContain(result);
 
     // 7. Restore original Math.random for other tests
     randomSpy.mockRestore();
@@ -67,7 +81,10 @@ describe('computer player', () => {
 
     // Verify computer attacked [6,6] (legal), not [5,5] (illegal)
     expect(enemyBoard.attackedCells).toContainEqual([6, 6]);
-    expect(outcome).toMatch(/hit|miss/);
+    expect([
+      Gameboard.ATTACK_RESULT.HIT,
+      Gameboard.ATTACK_RESULT.MISS,
+    ]).toContain(outcome);
     expect(randomSpy).toHaveBeenCalledTimes(4); // Proves retry
 
     randomSpy.mockRestore();

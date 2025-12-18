@@ -5,13 +5,14 @@ import Game from './modules/Game';
 import UIManager from './modules/UIManager';
 
 // Initialize game and UI
-window.Game = Game;
-window.game = new Game();
+window.Game = Game; // Make Game class globally available for console debugging
+window.game = new Game(); // Create instance
 window.ui = new UIManager(window.game);
 
-console.log('Battleship UI loaded!');
-console.log('Type "ui.startGame()" to begin a UI game.');
-console.log('Then use the UI to make moves.');
+console.log('Battleship loaded! Commands:');
+console.log('- ui.startGame()   : Start UI game');
+console.log('- game.startConsoleGame() : Start console game');
+console.log('- game.humanTurn(row, col) : Console game attack');
 
 // Initialize Lucide icons
 const iconSpan = document.getElementById('icon');

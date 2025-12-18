@@ -1,32 +1,29 @@
+/**
+ * Main Game controller for Battleship
+ * Manages game flow, turn order, and win conditions
+ */
+
 import Player from './Player';
 import Ship from './Ship';
 
 export default class Game {
   constructor() {
-    // Create two players: one human, one computer
-    this.human = new Player(false); // false = not a computer
-    this.computer = new Player(true); // true = is a computer
+    // Create players (human vs computer)
+    this.human = new Player(false); // Human player
+    this.computer = new Player(true); // Computer player
 
-    // Human goes first in Battleship
-    this.currentPlayer = this.human;
-
-    // Game starts as not over
+    // Set initial game state
+    this.currentPlayer = this.human; // Human goes first
     this.gameOver = false;
   }
 
   // Helper to create standard fleet
   static createStandardFleet() {
-    return [
-      new Ship(5), // Royal Dreadnaught
-      new Ship(4), // Ironclad Zeppelin
-      new Ship(3), // Patrol Cruiser
-      new Ship(3), // Scout Corvette
-      new Ship(2), // Interceptor Gyro
-    ];
+    return [new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)];
   }
 
-  // Random ship placement for computer
-  placeComputerShips() {
+  // Private helper method for random ship placement
+  _placeShipsRandomly(gameboard) {
     // Get the standard fleet of 5 ships
     const fleet = Game.createStandardFleet();
 
@@ -44,44 +41,23 @@ export default class Game {
         const col = Math.floor(Math.random() * 10);
 
         // Try to place the ship using GameBoard.placeShip method
-        // Returns true if successful. false if invalid (out of bound or overlap)
-        placed = this.computer.gameboard.placeShip(
-          ship,
-          [row, col],
-          orientation
-        );
+        // Returns true if successful. false if invalid (out of bounds or overlap)
+        placed = gameboard.placeShip(ship, [row, col], orientation);
       }
       // When the while loop ends, the ship has been placed
     });
+  }
 
+  // Computer ship placement (random)
+  placeComputerShips() {
+    this._placeShipsRandomly(this.computer.gameboard);
     console.log('Computer ships placed');
   }
 
-  // Ship placement for human (random too for now)
+  // Human ship placement (random)
   placeHumanShips() {
-    // get the standard fleet of 5 ships
-    const fleet = Game.createStandardFleet();
-
-    // For each ship in the fleet
-    fleet.forEach((ship) => {
-      let placed = false; // Start with 'not placed'
-
-      // Keep trying random positions until we find one that works
-      while (!placed) {
-        // Randomly choose orientation
-        const orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
-
-        // Random coordinates
-        const row = Math.floor(Math.random() * 10);
-        const col = Math.floor(Math.random() * 10);
-
-        //  Try to place the ship on the HUMAN's gameboard
-        placed = this.human.gameboard.placeShip(ship, [row, col], orientation);
-      }
-      // Ship placed successfully
-    });
-
-    console.log('Human ships placed"');
+    this._placeShipsRandomly(this.human.gameboard);
+    console.log('Human ships placed');
   }
 
   // Human turn
@@ -112,19 +88,18 @@ export default class Game {
       };
     }
 
-    // Display updated enemy board to show where the attack landed
+    // Log for console version
     console.log('\n=== YOUR ATTACK RESULT ===');
     console.log('ENEMY BOARD (updated):');
     this.displayBoard(this.computer.gameboard, false);
 
-    // Display result message with special handling for 'sunk'
     if (result === 'sunk') {
       console.log(`🎯 Attack at [${row}, ${col}]: SUNK! You sank a ship!`);
     } else {
       console.log(`Attack at [${row}, ${col}]: ${result.toUpperCase()}`);
     }
 
-    // Check if the computer has lost (all ships sunk)
+    // Check for win
     if (this.computer.gameboard.allShipsSunk()) {
       this.gameOver = true;
       console.log('\n🎉 === GAME OVER! You win! All enemy ships sunk! ===');
@@ -141,10 +116,11 @@ export default class Game {
       };
     }
 
-    // If game continues, switch turn to computer
+    // Switch turn
     this.currentPlayer = this.computer;
     console.log("\n=== Computer's turn next ===");
     console.log('Call: game.computerTurn()');
+
     return {
       success: true,
       result,
@@ -154,26 +130,26 @@ export default class Game {
 
   // Computer turn - automated
   computerTurn() {
+    // Validation
     if (this.gameOver || this.currentPlayer !== this.computer) {
       return { success: false, message: "Not computer's turn or game over" };
     }
 
-    // Computer makes a random legal attack
+    // Execute attack
     const result = this.computer.makeRandomAttack(this.human.gameboard);
 
-    // Display only the human's board (the one that was attacked)
+    // Log for console version
     console.log("\n=== COMPUTER'S ATTACK ===");
     console.log('YOUR BOARD (updated):');
     this.displayBoard(this.human.gameboard, true);
 
-    // Display result message
     if (result === 'sunk') {
       console.log(`💥 Computer SUNK your ship!`);
     } else {
       console.log(`Computer: ${result.toUpperCase()}`);
     }
 
-    // Check if human lost
+    // Check for win
     if (this.human.gameboard.allShipsSunk()) {
       this.gameOver = true;
       console.log('\n💀 === GAME OVER! Computer wins! ===');
@@ -181,19 +157,20 @@ export default class Game {
       return { success: true, result, gameOver: true, winner: 'computer' };
     }
 
-    // Switch back to human turn
+    // Switch turn
     this.currentPlayer = this.human;
     console.log('\n=== Your turn! ===');
     console.log('Attack with: game.humanTurn(row, col)');
+
     return { success: true, result, gameOver: false };
   }
 
-  // Simple console display (for debugging)
+  // Console visualization for debugging
   displayBoard(board, showShips = false) {
-    console.log('  0 1 2 3 4 5 6 7 8 9');
+    console.log('  0 1 2 3 4 5 6 7 8 9'); // Column headers (0-9)
 
     for (let row = 0; row < 10; row++) {
-      let rowStr = `${row}|`;
+      let rowStr = `${row}|`; // Row number
 
       for (let col = 0; col < 10; col++) {
         const cell = board.board[row][col];
@@ -201,14 +178,15 @@ export default class Game {
           ([r, c]) => r === row && c === col
         );
 
+        // Determine cell symbol
         if (cell instanceof Ship && attacked) {
-          rowStr += 'X ';
+          rowStr += 'X '; // Hit
         } else if (cell instanceof Ship && showShips) {
-          rowStr += 'S ';
+          rowStr += 'S '; // Visible ship
         } else if (!cell && attacked) {
-          rowStr += 'O ';
+          rowStr += 'O '; // Miss
         } else {
-          rowStr += '. ';
+          rowStr += '. '; // Unknown/Empty
         }
       }
 
@@ -216,22 +194,23 @@ export default class Game {
     }
   }
 
-  // Start a console-based game
-  startGame() {
+  // Starts a console-based Battleship game for debugging
+  startConsoleGame() {
+    // Title
     console.log('=== BATTLESHIP CONSOLE GAME ===');
 
-    // Place ships for both players
+    // Setup
     this.placeHumanShips();
     this.placeComputerShips();
 
-    // Display initial boards
+    // Initial board display
     console.log('\n=== YOUR BOARD (shows your ships) ===');
     this.displayBoard(this.human.gameboard, true);
 
     console.log('\n=== ENEMY BOARD (attack here) ===');
     this.displayBoard(this.computer.gameboard, false);
 
-    // Game instructions
+    // Instructions
     console.log('\n=== GAME STARTED! ===');
     console.log('Human goes first. Use game.humanTurn(row, col) to attack.');
     console.log('Example: game.humanTurn(0, 0)');
