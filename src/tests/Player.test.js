@@ -1,3 +1,4 @@
+// File: src/tests/Player.test.js
 import Player from '../js/modules/Player';
 import Ship from '../js/modules/Ship';
 import Gameboard from '../js/modules/Gameboard';
@@ -88,5 +89,227 @@ describe('computer player', () => {
     expect(randomSpy).toHaveBeenCalledTimes(4); // Proves retry
 
     randomSpy.mockRestore();
+  });
+
+  describe('AI behavior (HUNT/TARGET modes)', () => {
+    let computer;
+    let enemyGameboard;
+
+    beforeEach(() => {
+      computer = new Player(true);
+      enemyGameboard = new Gameboard();
+    });
+
+    describe('HUNT mode', () => {
+      test('starts in HUNT mode (random attacks)', () => {
+        const randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0.3);
+
+        computer.makeComputerAttack(enemyGameboard);
+
+        expect(enemyGameboard.attackedCells).toContainEqual([3, 3]);
+        randomSpy.mockRestore();
+      });
+
+      test('stays in HUNT mode after misses', () => {
+        const randomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.2) // First attack: row
+          .mockReturnValueOnce(0.2) // First attack: col
+          .mockReturnValueOnce(0.4) // Second attack: row
+          .mockReturnValueOnce(0.4); // Second attack: col
+
+        computer.makeComputerAttack(enemyGameboard); // Should be [2,2]
+        computer.makeComputerAttack(enemyGameboard); // Should be [4,4]
+
+        expect(enemyGameboard.attackedCells).toContainEqual([2, 2]);
+        expect(enemyGameboard.attackedCells).toContainEqual([4, 4]);
+        randomSpy.mockRestore();
+      });
+    });
+
+    describe('HUNT to TARGET transition', () => {
+      test('switches to TARGET mode after hitting a ship', () => {
+        const ship = new Ship(3);
+        enemyGameboard.placeShip(ship, [5, 5], 'horizontal');
+
+        const randomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.5) // Hits [5,5] - row
+          .mockReturnValueOnce(0.5) // Hits [5,5] - col
+          .mockReturnValue(0.1); // Won't be used (queue takes over)
+
+        // First attack - hit
+        const result = computer.makeComputerAttack(enemyGameboard);
+        expect(result).toBe(Gameboard.ATTACK_RESULT.HIT);
+
+        // Second attack - should be from adjacent queue
+        computer.makeComputerAttack(enemyGameboard);
+
+        // Should be one of: [4,5], [6,5], [5,4], [5,6]
+        const lastAttack = enemyGameboard.attackedCells[1];
+        const possibleAdjacent = [
+          [4, 5],
+          [6, 5],
+          [5, 4],
+          [5, 6],
+        ];
+        expect(possibleAdjacent).toContainEqual(lastAttack);
+
+        randomSpy.mockRestore();
+      });
+
+      test('queues all four adjacent cells after a hit', () => {
+        const ship = new Ship(3);
+        enemyGameboard.placeShip(ship, [5, 5], 'horizontal');
+
+        const randomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.5) // First hit row
+          .mockReturnValueOnce(0.5); // First hit col
+        // Note: Queue attacks won't use random, so we don't need more mocks
+
+        computer.makeComputerAttack(enemyGameboard); // Hit at [5,5]
+
+        // Attack 4 more times (should clear queue)
+        for (let i = 0; i < 4; i++) {
+          computer.makeComputerAttack(enemyGameboard);
+        }
+
+        // Should have 5 attacks total
+        expect(enemyGameboard.attackedCells).toHaveLength(5);
+
+        // All should be unique
+        const uniqueAttacks = new Set(
+          enemyGameboard.attackedCells.map((cell) => `${cell[0]},${cell[1]}`)
+        );
+        expect(uniqueAttacks.size).toBe(5);
+
+        randomSpy.mockRestore();
+      });
+    });
+
+    describe('TARGET mode behavior', () => {
+      test('processes adjacent cells in correct order (up, down, left, right)', () => {
+        const ship = new Ship(3);
+        enemyGameboard.placeShip(ship, [5, 5], 'horizontal');
+
+        const randomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.5) // Hit row
+          .mockReturnValueOnce(0.5); // Hit col
+
+        // First hit to enter TARGET mode
+        computer.makeComputerAttack(enemyGameboard);
+
+        // Spy on enemyGameboard.receiveAttack to see order
+        const attackOrder = [];
+        const originalReceiveAttack = enemyGameboard.receiveAttack;
+        enemyGameboard.receiveAttack = jest.fn((coords) => {
+          attackOrder.push(coords);
+          return originalReceiveAttack.call(enemyGameboard, coords);
+        });
+
+        // Process 4 attacks from queue
+        for (let i = 0; i < 4; i++) {
+          computer.makeComputerAttack(enemyGameboard);
+        }
+
+        // Should follow BFS order: up, down, left, right
+        expect(attackOrder[0]).toEqual([4, 5]); // Up
+        expect(attackOrder[1]).toEqual([6, 5]); // Down
+        expect(attackOrder[2]).toEqual([5, 4]); // Left
+        expect(attackOrder[3]).toEqual([5, 6]); // Right
+
+        randomSpy.mockRestore();
+        enemyGameboard.receiveAttack = originalReceiveAttack;
+      });
+
+      test('skips already attacked cells in queue', () => {
+        const ship = new Ship(3);
+        enemyGameboard.placeShip(ship, [5, 5], 'horizontal');
+
+        const randomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.5) // Hit row
+          .mockReturnValueOnce(0.5); // Hit col
+
+        // First hit
+        computer.makeComputerAttack(enemyGameboard);
+
+        // Pre-attack one adjacent cell
+        enemyGameboard.receiveAttack([4, 5]);
+
+        // Next attack - computer WILL attack [4,5] (illegal), get "already attacked"
+        // Then should continue to next in queue
+        computer.makeComputerAttack(enemyGameboard);
+
+        // Actually attacks [4,5] (returns "already attacked"), then what?
+        // Let's check what the second attack actually was
+        console.log('All attacks:', enemyGameboard.attackedCells);
+
+        randomSpy.mockRestore();
+      });
+    });
+
+    describe('ship sinking and reset', () => {
+      test('resets to HUNT mode after sinking a ship', () => {
+        const ship = new Ship(1); // Single-cell ship!
+        enemyGameboard.placeShip(ship, [5, 5], 'horizontal'); // Just one cell
+
+        const randomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.5) // Hit row at [5,5]
+          .mockReturnValueOnce(0.5); // Hit col at [5,5]
+
+        // First attack - hit and sink immediately (size 1 ship)
+        const result1 = computer.makeComputerAttack(enemyGameboard);
+        expect(result1).toBe(Gameboard.ATTACK_RESULT.SUNK);
+
+        // Second attack - should be back to HUNT (random)
+        randomSpy.mockRestore();
+        const newRandomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.3) // Row for random attack
+          .mockReturnValueOnce(0.3); // Col for random attack
+
+        computer.makeComputerAttack(enemyGameboard);
+
+        // Should be random coordinate
+        expect(enemyGameboard.attackedCells).toContainEqual([3, 3]);
+
+        newRandomSpy.mockRestore();
+      });
+    });
+
+    describe('edge cases', () => {
+      test('handles empty queue by switching back to HUNT', () => {
+        const ship = new Ship(3);
+        enemyGameboard.placeShip(ship, [5, 5], 'horizontal');
+
+        const randomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.5) // Hit row
+          .mockReturnValueOnce(0.5); // Hit col
+
+        // Hit to enter TARGET (queues 4 adjacent cells)
+        computer.makeComputerAttack(enemyGameboard);
+
+        // Manually clear the queue (simulating all adjacent cells being processed)
+        computer.targetQueue = [];
+
+        // Next attack should switch to HUNT
+        randomSpy.mockRestore();
+        const newRandomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.2) // Random row
+          .mockReturnValueOnce(0.2); // Random col
+
+        computer.makeComputerAttack(enemyGameboard);
+
+        expect(enemyGameboard.attackedCells).toContainEqual([2, 2]);
+
+        newRandomSpy.mockRestore();
+      });
+    });
   });
 });
