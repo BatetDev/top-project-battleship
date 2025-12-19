@@ -11,24 +11,38 @@ export default class UIManager {
     // Initialize UI components
     this.setupBoardReferences();
     this.setupEventListeners();
+    this.setupMobileTabs();
 
     console.log('UIManager: Ready to render boards');
   }
 
   // Store DOM element references for easy access
   setupBoardReferences() {
-    this.humanBoard = document.getElementById('human-board');
-    this.computerBoard = document.getElementById('computer-board');
-    this.gameMessage = document.getElementById('game-message');
+    // Board containers
+    this.humanBoardDesktop = document.getElementById('human-board-desktop');
+    this.computerBoardDesktop = document.getElementById(
+      'computer-board-desktop'
+    );
+    this.humanBoardMobile = document.getElementById('human-board-mobile-grid');
+    this.computerBoardMobile = document.getElementById(
+      'computer-board-mobile-grid'
+    );
+
+    // UI elements
+    this.gameMessage = document.getElementById('game-status');
     this.newGameBtn = document.getElementById('new-game-btn');
     this.gameOverModal = document.getElementById('game-over-modal');
     this.gameOverTitle = document.getElementById('game-over-title');
     this.gameOverMessage = document.getElementById('game-over-message');
     this.playAgainBtn = document.getElementById('play-again-btn');
 
+    // Tab elements
+    this.tabYourFleet = document.getElementById('tab-your-fleet');
+    this.tabEnemyFleet = document.getElementById('tab-enemy-fleet');
+
     // Critical elements for game function
-    if (!this.humanBoard || !this.computerBoard) {
-      console.error('Missing board containers. Check HTML IDs.');
+    if (!this.humanBoardDesktop || !this.computerBoardDesktop) {
+      console.error('Missing desktop board containers. Check HTML IDs.');
     }
   }
 
@@ -36,7 +50,7 @@ export default class UIManager {
     // Setup New Game button
     if (this.newGameBtn) {
       this.newGameBtn.addEventListener('click', () => {
-        console.log('DEPLOY FLEET button clicked!');
+        console.log('START button clicked!');
         this.startGame();
         this.hideGameOverModal();
       });
@@ -52,32 +66,41 @@ export default class UIManager {
         this.hideGameOverModal();
       });
     }
+  }
 
-    // Setup computer board for attack clicks
-    if (this.computerBoard) {
-      this.computerBoard.addEventListener('click', (e) => {
-        // Prevent clicks when game inactive or over
-        if (!this.isGameActive || this.game.gameOver) return;
-
-        // Get clicked cell
-        const cell = e.target;
-
-        // Only handle clicks on unattacked cells
-        if (!cell.classList.contains('cell')) return;
-        if (
-          cell.classList.contains('cell-hit') ||
-          cell.classList.contains('cell-miss')
-        ) {
-          return;
-        }
-
-        // Extract coordinates from data attributes
-        const row = parseInt(cell.dataset.row);
-        const col = parseInt(cell.dataset.col);
-
-        // Process the attack
-        this.processHumanAttack(row, col);
+  setupMobileTabs() {
+    // Setup mobile tab switching
+    if (this.tabYourFleet && this.tabEnemyFleet) {
+      this.tabYourFleet.addEventListener('click', () => {
+        this.switchToBoard('human');
       });
+
+      this.tabEnemyFleet.addEventListener('click', () => {
+        this.switchToBoard('computer');
+      });
+    }
+  }
+
+  switchToBoard(boardType) {
+    const humanBoard = document.getElementById('human-board-mobile');
+    const computerBoard = document.getElementById('computer-board-mobile');
+
+    if (boardType === 'human') {
+      humanBoard.classList.remove('hidden');
+      humanBoard.classList.add('active');
+      computerBoard.classList.add('hidden');
+      computerBoard.classList.remove('active');
+
+      this.tabYourFleet.classList.add('active');
+      this.tabEnemyFleet.classList.remove('active');
+    } else {
+      humanBoard.classList.add('hidden');
+      humanBoard.classList.remove('active');
+      computerBoard.classList.remove('hidden');
+      computerBoard.classList.add('active');
+
+      this.tabYourFleet.classList.remove('active');
+      this.tabEnemyFleet.classList.add('active');
     }
   }
 
@@ -93,74 +116,116 @@ export default class UIManager {
     this.game.placeHumanShips();
     this.game.placeComputerShips();
 
-    // Render boards:
-    // - Human board: show ships (true)
-    // - Computer board: hide ships (false)
-    this.renderBoard(this.humanBoard, this.game.human.gameboard, true);
-    this.renderBoard(this.computerBoard, this.game.computer.gameboard, false);
+    // Render all boards
+    this.renderAllBoards();
 
     // Update UI message
-    this.updateGameMessage('Fleets deployed! Your turn: Attack enemy cells.');
+    this.updateGameMessage('Fleets deployed! Your turn.');
+
+    // Switch to enemy tab on mobile (for attacking)
+    if (window.innerWidth < 768) {
+      this.switchToBoard('computer');
+    }
 
     // Debug logging
     console.log('Human ships placed (randomly)');
     console.log('Computer ships placed (randomly)');
   }
 
-  renderBoard(container, gameboard, showShips) {
-    // Clear the board container
-    container.innerHTML = '';
+  renderAllBoards() {
+    // Render human board to both desktop and mobile
+    this.renderBoard('human', this.game.human.gameboard, true);
+
+    // Render computer board to both desktop and mobile
+    this.renderBoard('computer', this.game.computer.gameboard, false);
+  }
+
+  renderBoard(boardType, gameboard, showShips) {
+    // Determine which containers to update
+    const desktopContainer =
+      boardType === 'human'
+        ? this.humanBoardDesktop
+        : this.computerBoardDesktop;
+
+    const mobileContainer =
+      boardType === 'human' ? this.humanBoardMobile : this.computerBoardMobile;
+
+    // Array of containers to render to
+    const containers = [];
+    if (desktopContainer) containers.push(desktopContainer);
+    if (mobileContainer) containers.push(mobileContainer);
 
     // Precompute attacked cells for O(1) lookup
     const attackedSet = new Set(
       gameboard.attackedCells.map(([r, c]) => `${r},${c}`)
     );
 
-    // Create 10×10 grid (standard Battleship size)
-    for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 10; col++) {
-        // Create cell element with base styling
-        const cell = document.createElement('div');
-        cell.className = 'cell cell-empty';
-        cell.dataset.row = row;
-        cell.dataset.col = col;
+    // Render to each container
+    containers.forEach((container) => {
+      // Clear the container
+      container.innerHTML = '';
 
-        // Check cell state from gameboard
-        const cellContent = gameboard.board[row][col];
-        const attacked = attackedSet.has(`${row},${col}`);
-
-        // Apply visual state based on game data
-        if (attacked && cellContent) {
-          // Hit on a ship
-          const ship = cellContent;
-          if (ship.isSunk()) {
-            cell.className = 'cell cell-sunk';
-            cell.textContent = '💥';
-          } else {
-            cell.className = 'cell cell-hit';
-            cell.textContent = '✖';
-          }
-        } else if (attacked && !cellContent) {
-          // Miss (attacked empty cell)
-          cell.className = 'cell cell-miss';
-          cell.textContent = '○';
-        } else if (!attacked && cellContent && showShips) {
-          // Healthy ship (only shown on player's own board)
-          cell.className = 'cell cell-ship';
-          cell.textContent = '■';
-        } else {
-          // Empty or hidden ship
+      // Create 10×10 grid
+      for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+          // Create cell element
+          const cell = document.createElement('div');
           cell.className = 'cell cell-empty';
-          cell.textContent = '.';
+          cell.dataset.row = row;
+          cell.dataset.col = col;
+
+          // Check cell state from gameboard
+          const cellContent = gameboard.board[row][col];
+          const attacked = attackedSet.has(`${row},${col}`);
+
+          // Apply visual state based on game data
+          if (attacked && cellContent) {
+            // Hit on a ship
+            const ship = cellContent;
+            if (ship.isSunk()) {
+              cell.className = 'cell cell-sunk';
+              cell.textContent = '💥';
+            } else {
+              cell.className = 'cell cell-hit';
+              cell.textContent = '✖';
+            }
+          } else if (attacked && !cellContent) {
+            // Miss (attacked empty cell)
+            cell.className = 'cell cell-miss';
+            cell.textContent = '○';
+          } else if (!attacked && cellContent && showShips) {
+            // Healthy ship (only shown on player's own board)
+            cell.className = 'cell cell-ship';
+            cell.textContent = '■';
+          } else {
+            // Empty or hidden ship
+            cell.className = 'cell cell-empty';
+            cell.textContent = '.';
+          }
+
+          // Add click handler for computer board cells
+          if (boardType === 'computer' && !attacked) {
+            cell.addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (
+                this.isGameActive &&
+                !this.game.gameOver &&
+                this.game.currentPlayer === this.game.human
+              ) {
+                this.processHumanAttack(row, col);
+              }
+            });
+          }
+
+          // Add cell to the board
+          container.appendChild(cell);
         }
-
-        // Add cell to the board
-        container.appendChild(cell);
       }
-    }
+    });
 
-    // Debug logging
-    console.log(`Rendered ${container.id}`);
+    console.log(
+      `Rendered ${boardType} board to ${containers.length} container(s)`
+    );
   }
 
   // Update game message display
@@ -201,27 +266,25 @@ export default class UIManager {
     // Step 3: Execute human turn
     const result = this.game.humanTurn(row, col);
 
-    // Step 4: Check if attack was succesful
+    // Step 4: Check if attack was successful
     if (!result.success) {
       console.log('Attack failed:', result.message);
       this.updateGameMessage(`Invalid: ${result.message}`);
       return;
     }
 
-    // Step 5: Update computer board to show the attack
-    this.renderBoard(this.computerBoard, this.game.computer.gameboard, false);
+    // Step 5: Update all computer boards to show the attack
+    this.renderBoard('computer', this.game.computer.gameboard, false);
 
     // Step 6: Update game message
     const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
-    this.updateGameMessage(`Your attack [${row},${col}]: ${resultText}`);
+    this.updateGameMessage(`Attack [${row},${col}]: ${resultText}`);
 
     // Step 7: Check if human won
     if (result.gameOver && result.winner === 'human') {
       console.log('Human won the game!');
       this.updateGameMessage('🎉 VICTORY! All enemy ships sunk!');
       this.isGameActive = false;
-      // Reveal all computer ships at game end
-      this.renderBoard(this.computerBoard, this.game.computer.gameboard, true);
 
       // Show game over modal
       this.showGameOverModal(
@@ -235,7 +298,7 @@ export default class UIManager {
     if (!result.gameOver) {
       // Update message to indicate computer is about to play
       this.updateGameMessage(
-        `Your attack [${row},${col}]: ${resultText}. Computer's turn...`
+        `Attack [${row},${col}]: ${resultText}. Computer's turn...`
       );
 
       // Wait 1.5 seconds, then trigger computer turn (for better UX)
@@ -263,15 +326,15 @@ export default class UIManager {
 
     console.log('Computer turn result:', result);
 
-    // Step 4: Check if computer turn was succesful
+    // Step 4: Check if computer turn was successful
     if (!result.success) {
       console.log('Computer turn failed:', result.message);
       this.updateGameMessage(`Computer error: ${result.message}`);
       return;
     }
 
-    // Step 5: Update human board to show computer's attack
-    this.renderBoard(this.humanBoard, this.game.human.gameboard, true);
+    // Step 5: Update all human boards to show computer's attack
+    this.renderBoard('human', this.game.human.gameboard, true);
 
     // Step 6: Update game message
     const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
@@ -292,7 +355,11 @@ export default class UIManager {
     }
 
     // Step 8: If game continues, it's now human's turn again
-    // The game.computerTurn() method already switched currentPlayer back to human
-    this.updateGameMessage('Your turn! Click an enemy cell.');
+    // Switch to enemy tab on mobile for player's turn
+    if (window.innerWidth < 768) {
+      this.switchToBoard('computer');
+    }
+
+    this.updateGameMessage('Your turn! Attack enemy cells.');
   }
 }
