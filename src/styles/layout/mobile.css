@@ -1,0 +1,9 @@
+@media (max-width: 639px) {
+  .board-grid {
+    gap: 0.125rem;
+    min-height: 250px;
+  }
+  .cell {
+    font-size: clamp(0.5rem, 2.5vw, 0.8rem);
+  }
+}

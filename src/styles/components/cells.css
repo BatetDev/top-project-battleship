@@ -1,0 +1,36 @@
+.cell {
+  @apply aspect-square flex items-center justify-center font-bold 
+         transition-all duration-200 cursor-pointer
+         border border-terminal-green/20 
+         bg-gradient-to-br from-black/90 to-gray-900/80
+         text-terminal-green
+         text-[clamp(0.5rem,2.5vw,1rem)];
+  text-shadow: 0 0 5px currentColor;
+}
+
+.cell:hover:not(.cell-hit):not(.cell-miss):not(.cell-sunk) {
+  @apply border-terminal-green/60 scale-105;
+  box-shadow: 0 0 12px currentColor;
+  background: linear-gradient(135deg, #111111, #222222);
+}
+
+.cell-empty {
+  @apply text-terminal-green/40;
+}
+.cell-ship {
+  @apply text-ship-color;
+}
+.cell-hit {
+  @apply bg-hit-color border-hit-color text-white;
+  text-shadow: 0 0 10px #ff0000;
+}
+.cell-miss {
+  @apply bg-miss-color border-miss-color text-gray-800;
+}
+.cell-sunk {
+  @apply bg-hit-color/80 border-hit-color text-white animate-pulse-slow;
+  box-shadow: 0 0 20px #ff0000;
+}
+.cell-disabled {
+  @apply opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-none;
+}

@@ -1,0 +1,11 @@
+html {
+  font-family: 'Press Start 2P', monospace;
+}
+
+h1,
+h2,
+h3,
+.tab-button {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

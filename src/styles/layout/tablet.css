@@ -1,0 +1,13 @@
+@media (min-width: 640px) and (max-width: 1023px) {
+  .board-grid {
+    gap: 0.375rem;
+    min-height: 320px;
+  }
+  .board-section {
+    @apply p-4;
+  }
+  /* Stack boards vertically on tablet */
+  .md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+}

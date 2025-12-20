@@ -116,14 +116,14 @@ export default class UIManager {
         '<i data-lucide="refresh-cw" class="inline-block w-3 h-3 sm:w-4 sm:h-4 mr-1"></i> RESTART';
     }
 
-    // Keep user on their fleet for 2.5 seconds to view deployment
+    // Keep user on their fleet for 2 seconds to view deployment
     setTimeout(() => {
       // Switch to enemy tab on mobile for player's turn
       if (window.innerWidth < 768) {
         this.switchToBoard('computer');
       }
       this.updateGameMessage('Battle started! Your turn.');
-    }, 2500);
+    }, 2000);
   }
 
   renderEmptyBoards() {

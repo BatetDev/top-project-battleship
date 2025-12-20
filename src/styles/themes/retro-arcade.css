@@ -1,0 +1,23 @@
+#game-status {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
+  font-size: clamp(0.7rem, 3.5vw, 0.95rem);
+}
+
+#new-game-btn {
+  @apply bg-terminal-green-dim hover:bg-terminal-green 
+         text-black font-pixel font-bold py-2 px-4 rounded-none 
+         border-2 border-terminal-green transition-colors 
+         uppercase tracking-wider text-sm;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  box-shadow:
+    0 4px 0 #006600,
+    0 6px 8px rgba(0, 0, 0, 0.4);
+}
+#new-game-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 0px 0 #006600,
+    0 3px 6px rgba(0, 0, 0, 0.3);
+}

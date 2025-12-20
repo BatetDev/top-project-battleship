@@ -1,4 +1,4 @@
-import '../styles/output.css';
+import '../styles/input.css';
 import { createIcons, icons } from 'lucide';
 
 import Game from './modules/Game';
