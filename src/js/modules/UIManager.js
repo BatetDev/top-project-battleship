@@ -13,7 +13,10 @@ export default class UIManager {
     this.setupEventListeners();
     this.setupMobileTabs();
 
-    console.log('UIManager: Ready to render boards');
+    // Render empty boards using a temporary game instance
+    this.renderEmptyBoards();
+
+    console.log('UIManager: Initialized with empty boards');
   }
 
   // Store DOM element references for easy access
@@ -31,10 +34,6 @@ export default class UIManager {
     // UI elements
     this.gameMessage = document.getElementById('game-status');
     this.newGameBtn = document.getElementById('new-game-btn');
-    this.gameOverModal = document.getElementById('game-over-modal');
-    this.gameOverTitle = document.getElementById('game-over-title');
-    this.gameOverMessage = document.getElementById('game-over-message');
-    this.playAgainBtn = document.getElementById('play-again-btn');
 
     // Tab elements
     this.tabYourFleet = document.getElementById('tab-your-fleet');
@@ -47,24 +46,8 @@ export default class UIManager {
   }
 
   setupEventListeners() {
-    // Setup New Game button
     if (this.newGameBtn) {
-      this.newGameBtn.addEventListener('click', () => {
-        console.log('START button clicked!');
-        this.startGame();
-        this.hideGameOverModal();
-      });
-    } else {
-      console.warn('New Game button not found');
-    }
-
-    // Setup Play Again button (same functionality)
-    if (this.playAgainBtn) {
-      this.playAgainBtn.addEventListener('click', () => {
-        console.log('PLAY AGAIN button clicked!');
-        this.startGame();
-        this.hideGameOverModal();
-      });
+      this.newGameBtn.addEventListener('click', () => this.startNewGame());
     }
   }
 
@@ -104,32 +87,64 @@ export default class UIManager {
     }
   }
 
-  // Start the UI game
-  startGame() {
-    console.log('UIManager: Starting new game');
+  startNewGame() {
+    console.log('Starting new game...');
 
-    // Create fresh game instance using globally available Game class
+    // Reset game state
     this.game = new window.Game();
     this.isGameActive = true;
+    this.gameOver = false;
 
-    // Place ships randomly for both players
+    // Always switch to human tab FIRST
+    if (window.innerWidth < 768) {
+      this.switchToBoard('human');
+    }
+
+    // Deploy both fleets
     this.game.placeHumanShips();
     this.game.placeComputerShips();
 
-    // Render all boards
+    // Render boards with ships
     this.renderAllBoards();
 
-    // Update UI message
-    this.updateGameMessage('Fleets deployed! Your turn.');
+    // Update UI state
+    this.updateGameMessage('Fleet deployed! Get ready...');
 
-    // Switch to enemy tab on mobile (for attacking)
-    if (window.innerWidth < 768) {
-      this.switchToBoard('computer');
+    // Update button text
+    if (this.newGameBtn) {
+      this.newGameBtn.innerHTML =
+        '<i data-lucide="refresh-cw" class="inline-block w-3 h-3 sm:w-4 sm:h-4 mr-1"></i> RESTART';
     }
 
-    // Debug logging
-    console.log('Human ships placed (randomly)');
-    console.log('Computer ships placed (randomly)');
+    // Keep user on their fleet for 2.5 seconds to view deployment
+    setTimeout(() => {
+      // Switch to enemy tab on mobile for player's turn
+      if (window.innerWidth < 768) {
+        this.switchToBoard('computer');
+      }
+      this.updateGameMessage('Battle started! Your turn.');
+    }, 2500);
+  }
+
+  renderEmptyBoards() {
+    // Create a temporary game instance to get empty boards
+    const tempGame = new window.Game();
+
+    // Render both boards (they'll be empty by default)
+    this.renderBoard('human', tempGame.human.gameboard, true);
+    this.renderBoard('computer', tempGame.computer.gameboard, false);
+
+    // Set initial UI state
+    this.updateGameMessage('Ready for battle! Click START to deploy fleet.');
+
+    // Set button to initial state
+    if (this.newGameBtn) {
+      this.newGameBtn.innerHTML =
+        '<i data-lucide="play" class="inline-block w-3 h-3 sm:w-4 sm:h-4 mr-1"></i> START';
+    }
+
+    // Set initial tab to human board
+    this.switchToBoard('human');
   }
 
   renderAllBoards() {
@@ -235,73 +250,49 @@ export default class UIManager {
     }
   }
 
-  // Show/hide game over modal
-  showGameOverModal(title, message) {
-    if (this.gameOverModal && this.gameOverTitle && this.gameOverMessage) {
-      this.gameOverTitle.textContent = title;
-      this.gameOverMessage.textContent = message;
-      this.gameOverModal.classList.remove('hidden');
-    }
-  }
-
-  hideGameOverModal() {
-    if (this.gameOverModal) {
-      this.gameOverModal.classList.add('hidden');
-    }
-  }
-
   processHumanAttack(row, col) {
     // Step 1: Basic validation
     if (!this.isGameActive || this.game.gameOver) {
       this.updateGameMessage('Game is not active or has ended!');
       return;
     }
-
     // Step 2: Check if it's actually human's turn
     if (this.game.currentPlayer !== this.game.human) {
       this.updateGameMessage("Not your turn! Wait for computer's move.");
       return;
     }
-
     // Step 3: Execute human turn
     const result = this.game.humanTurn(row, col);
-
     // Step 4: Check if attack was successful
     if (!result.success) {
       console.log('Attack failed:', result.message);
       this.updateGameMessage(`Invalid: ${result.message}`);
       return;
     }
-
     // Step 5: Update all computer boards to show the attack
     this.renderBoard('computer', this.game.computer.gameboard, false);
-
     // Step 6: Update game message
     const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
     this.updateGameMessage(`Attack [${row},${col}]: ${resultText}`);
-
     // Step 7: Check if human won
     if (result.gameOver && result.winner === 'human') {
       console.log('Human won the game!');
       this.updateGameMessage('🎉 VICTORY! All enemy ships sunk!');
       this.isGameActive = false;
-
-      // Show game over modal
-      this.showGameOverModal(
-        'VICTORY! 🎉',
-        'Congratulations! You sank all enemy ships and conquered the skies!'
-      );
       return;
+    }
+
+    // Switch to human board BEFORE computer's turn
+    if (window.innerWidth < 768) {
+      this.switchToBoard('human');
+      this.updateGameMessage(
+        `Attack [${row},${col}]: ${resultText}. Computer is targeting your fleet...`
+      );
     }
 
     // Step 8: If game continues, trigger computer turn after a short delay
     if (!result.gameOver) {
-      // Update message to indicate computer is about to play
-      this.updateGameMessage(
-        `Attack [${row},${col}]: ${resultText}. Computer's turn...`
-      );
-
-      // Wait 1.5 seconds, then trigger computer turn (for better UX)
+      // Wait 1.5 seconds, then trigger computer turn
       setTimeout(() => {
         this.processComputerTurn();
       }, 1500);
@@ -314,52 +305,40 @@ export default class UIManager {
       console.log('Computer turn: Game is not active or has ended');
       return;
     }
-
     // Step 2: Check if it's actually computer's turn
     if (this.game.currentPlayer !== this.game.computer) {
       console.log("Computer turn: Not computer's turn");
       return;
     }
-
     // Step 3: Execute computer turn
     const result = this.game.computerTurn();
-
     console.log('Computer turn result:', result);
-
     // Step 4: Check if computer turn was successful
     if (!result.success) {
       console.log('Computer turn failed:', result.message);
       this.updateGameMessage(`Computer error: ${result.message}`);
       return;
     }
-
     // Step 5: Update all human boards to show computer's attack
     this.renderBoard('human', this.game.human.gameboard, true);
-
     // Step 6: Update game message
     const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
     this.updateGameMessage(`Computer attacked: ${resultText}`);
-
     // Step 7: Check if computer won
     if (result.gameOver && result.winner === 'computer') {
       console.log('Computer won the game!');
       this.updateGameMessage('💀 DEFEAT! All your ships are sunk!');
       this.isGameActive = false;
-
-      // Show game over modal
-      this.showGameOverModal(
-        'DEFEAT! 💀',
-        'The enemy fleet has overwhelmed your defenses. All your ships have been sunk!'
-      );
       return;
     }
 
-    // Step 8: If game continues, it's now human's turn again
-    // Switch to enemy tab on mobile for player's turn
-    if (window.innerWidth < 768) {
-      this.switchToBoard('computer');
-    }
-
-    this.updateGameMessage('Your turn! Attack enemy cells.');
+    // Keep player on their board for 1 second to see computer's attack
+    setTimeout(() => {
+      // Switch to enemy tab on mobile for player's turn
+      if (window.innerWidth < 768) {
+        this.switchToBoard('computer');
+      }
+      this.updateGameMessage('Your turn! Attack enemy cells.');
+    }, 1000);
   }
 }

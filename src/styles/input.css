@@ -188,24 +188,6 @@ header h1 {
   background: #b45309;
 }
 
-/* Game Over Modal - responsive */
-#game-over-modal > div {
-  animation: modalAppear 0.3s ease-out;
-  margin: 0.5rem;
-  padding: 1.5rem;
-}
-
-@keyframes modalAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
 /* GitHub icon hover effect */
 [data-lucide='github'] {
   transition: transform 0.2s ease;
@@ -215,23 +197,44 @@ header h1 {
   transform: scale(1.1);
 }
 
-/* START button retro style */
-#new-game-btn {
+/* Two-button system */
+#deploy-fleet-btn,
+#start-battle-btn {
   font-family: 'Orbitron', sans-serif;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
-  min-width: 60px; /* Ensure button doesn't get too small */
+  min-width: 70px;
 }
 
-#new-game-btn:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+#deploy-fleet-btn {
+  background: linear-gradient(to bottom, #0e7490, #155e75);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+}
+
+#deploy-fleet-btn:hover {
+  background: linear-gradient(to bottom, #06b6d4, #0e7490);
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(6, 182, 212, 0.3);
 }
 
-#new-game-btn:active {
-  transform: translateY(0);
+#start-battle-btn {
+  background: linear-gradient(to bottom, #b45309, #92400e);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+#start-battle-btn:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #d97706, #b45309);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(251, 191, 36, 0.3);
+}
+
+#start-battle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* Mobile-specific overrides */
@@ -263,4 +266,24 @@ header h1 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* === Footer Styles === */
+footer {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(180, 83, 9, 0.2);
+  margin-top: auto;
+}
+
+footer a {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: rgba(180, 83, 9, 0.1);
+  transition: all 0.2s ease;
+}
+
+footer a:hover {
+  background: rgba(180, 83, 9, 0.2);
+  transform: translateY(-1px);
 }

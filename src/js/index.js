@@ -22,6 +22,3 @@ if (iconSpan) {
 }
 
 createIcons({ icons });
-
-// Auto-start the UI game
-window.ui.startGame();
