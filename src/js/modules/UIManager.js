@@ -311,20 +311,29 @@ export default class UIManager {
       return;
     }
 
-    // Switch to human board BEFORE computer's turn
-    if (window.innerWidth < 768) {
-      this.switchToBoard('human');
-      this.updateGameMessage(
-        `Attack [${row},${col}]: ${resultText}. Computer is targeting your fleet...`
-      );
-    }
-
-    // Step 8: If game continues, trigger computer turn after a short delay
+    // Step 8: Handle post-attack flow with proper sequencing
     if (!result.gameOver) {
-      // Wait 1.5 seconds, then trigger computer turn
-      setTimeout(() => {
-        this.processComputerTurn();
-      }, 1500);
+      if (window.innerWidth < 768) {
+        // MOBILE: Show result → Switch tab → Wait → Computer attacks
+        this.updateGameMessage(
+          `Attack [${row},${col}]: ${resultText}. Computer is targeting your fleet...`
+        );
+
+        // First delay: let player see their attack result
+        setTimeout(() => {
+          this.switchToBoard('human');
+
+          // Second delay: let player settle on their board before computer attacks
+          setTimeout(() => {
+            this.processComputerTurn();
+          }, 600); // Adjust this value (300-800ms)
+        }, 1000);
+      } else {
+        // DESKTOP: Simple delay since both boards are visible
+        setTimeout(() => {
+          this.processComputerTurn();
+        }, 1000);
+      }
     }
   }
 
