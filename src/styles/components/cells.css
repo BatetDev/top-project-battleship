@@ -4,7 +4,7 @@
          border border-terminal-green/20 
          bg-gradient-to-br from-black/90 to-gray-900/80
          text-terminal-green
-         text-[clamp(0.5rem,2.5vw,1rem)];
+         text-[clamp(0.75rem,2.5vw,1rem)];
   text-shadow: 0 0 5px currentColor;
 }
 
@@ -14,23 +14,57 @@
   background: linear-gradient(135deg, #111111, #222222);
 }
 
-.cell-empty {
-  @apply text-terminal-green/40;
+.cell-empty svg {
+  @apply w-6 h-6 sm:w-8 sm:h-8;
+  opacity: 0.4; /* Very subtle for background */
+  stroke: #00aa00; /* terminal-green-dim color */
 }
-.cell-ship {
-  @apply text-ship-color;
+
+/* Optional: Add gentle wave animation */
+.cell-empty svg {
+  animation: wave 4s ease-in-out infinite;
 }
-.cell-hit {
-  @apply bg-hit-color border-hit-color text-white;
-  text-shadow: 0 0 10px #ff0000;
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
 }
-.cell-miss {
-  @apply bg-miss-color border-miss-color text-gray-800;
+
+.cell-ship svg {
+  @apply w-6 h-6 sm:w-8 sm:h-8; /* Slightly smaller than droplet */
+  opacity: 0.9;
+  stroke: #00aaff; /* ship-color from your tailwind config */
 }
+
+.cell-hit svg {
+  @apply w-6 h-6 sm:w-8 sm:h-8;
+  opacity: 0.9;
+  stroke: #ff0000;
+  filter: drop-shadow(0 0 4px rgba(255, 0, 0, 0.5));
+}
+
+.cell-miss svg {
+  @apply w-6 h-6 sm:w-8 sm:h-8;
+  opacity: 0.7;
+  stroke: #00aaff;
+}
+
+.cell-sunk svg {
+  @apply w-6 h-6 sm:w-8 sm:h-8;
+  opacity: 0.9;
+  stroke: #ff9900;
+  filter: drop-shadow(0 0 6px rgba(255, 153, 0, 0.7));
+}
+
 .cell-sunk {
-  @apply bg-hit-color/80 border-hit-color text-white animate-pulse-slow;
-  box-shadow: 0 0 20px #ff0000;
+  animation: pulse-slow 2s ease-in-out infinite;
 }
+
 .cell-disabled {
   @apply opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-none;
 }
