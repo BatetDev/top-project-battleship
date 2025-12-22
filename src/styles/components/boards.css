@@ -9,6 +9,7 @@
   position: relative;
   overflow: hidden;
 }
+
 .board-section::before {
   content: '';
   position: absolute;
@@ -21,9 +22,10 @@
   pointer-events: none;
   z-index: 1;
 }
+
 .board-section h2 {
   @apply font-bold mb-3 md:mb-4 text-terminal-green uppercase tracking-wider;
-  font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+  font-size: clamp(0.9rem, 3.6vw, 1.2rem);
   text-shadow: 0 0 10px #00ff00;
   letter-spacing: 2px;
   z-index: 2;
@@ -38,6 +40,7 @@
   position: relative;
   z-index: 2;
 }
+
 .board-grid::after {
   content: '';
   position: absolute;
@@ -59,6 +62,7 @@
   transform: translateY(10px);
   pointer-events: none;
 }
+
 .board-container.active {
   @apply block;
   opacity: 1;
@@ -66,9 +70,11 @@
   pointer-events: auto;
   animation: fadeInUp 0.4s ease-out;
 }
+
 .board-container:not(.active) {
   @apply hidden;
 }
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

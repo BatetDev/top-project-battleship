@@ -1,15 +1,21 @@
 #game-status {
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 500;
   letter-spacing: 0.05em;
-  text-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
-  font-size: clamp(0.7rem, 3.5vw, 0.95rem);
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+  line-height: 1.4;
+  min-height: 2.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
 }
 
 #new-game-btn {
   @apply bg-terminal-green-dim hover:bg-terminal-green 
-         text-black font-bold py-2 px-4 rounded-none 
+         text-black font-bold py-2 px-4 rounded-md
          border-2 border-terminal-green transition-colors 
-         uppercase tracking-wider text-sm;
+         uppercase tracking-wider text-base;
   text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
   box-shadow:
     0 4px 0 #006600,

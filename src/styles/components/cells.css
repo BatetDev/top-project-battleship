@@ -15,30 +15,15 @@
 }
 
 .cell-empty svg {
-  @apply w-6 h-6 sm:w-8 sm:h-8;
-  opacity: 0.4; /* Very subtle for background */
-  stroke: #00aa00; /* terminal-green-dim color */
-}
-
-/* Optional: Add gentle wave animation */
-.cell-empty svg {
-  animation: wave 4s ease-in-out infinite;
-}
-
-@keyframes wave {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-1px);
-  }
+  @apply w-5 h-5 sm:w-6 sm:h-6;
+  opacity: 0.3;
+  stroke: #00aa00;
 }
 
 .cell-ship svg {
-  @apply w-6 h-6 sm:w-8 sm:h-8; /* Slightly smaller than droplet */
-  opacity: 0.9;
-  stroke: #00aaff; /* ship-color from your tailwind config */
+  @apply w-6 h-6 sm:w-8 sm:h-8;
+  opacity: 0.8;
+  stroke: #00aa00;
 }
 
 .cell-hit svg {
@@ -52,8 +37,8 @@
 
 .cell-miss svg {
   @apply w-6 h-6 sm:w-8 sm:h-8;
-  opacity: 0.7;
-  stroke: #00aaff;
+  opacity: 0.6;
+  stroke: #00aa00;
 }
 
 .cell-sunk svg {

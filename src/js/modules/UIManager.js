@@ -137,7 +137,7 @@ export default class UIManager {
     this.renderBoard('computer', tempGame.computer.gameboard, false);
 
     // Set initial UI state
-    this.updateGameMessage('Ready for battle! Click START to deploy fleet.');
+    this.updateGameMessage('Click START to deploy your fleet');
 
     // Set button to initial state
     if (this.newGameBtn) {
@@ -282,12 +282,12 @@ export default class UIManager {
   processHumanAttack(row, col) {
     // Step 1: Basic validation
     if (!this.isGameActive || this.game.gameOver) {
-      this.updateGameMessage('Game is not active or has ended!');
+      this.updateGameMessage('Game inactive or over!');
       return;
     }
     // Step 2: Check if it's actually human's turn
     if (this.game.currentPlayer !== this.game.human) {
-      this.updateGameMessage("Not your turn! Wait for computer's move.");
+      this.updateGameMessage('Not your turn!');
       return;
     }
     // Step 3: Execute human turn
@@ -302,11 +302,11 @@ export default class UIManager {
     this.renderBoard('computer', this.game.computer.gameboard, false);
     // Step 6: Update game message
     const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
-    this.updateGameMessage(`Attack [${row},${col}]: ${resultText}`);
+    this.updateGameMessage(`Your attack: ${resultText}!`);
     // Step 7: Check if human won
     if (result.gameOver && result.winner === 'human') {
       console.log('Human won the game!');
-      this.updateGameMessage('🎉 VICTORY! All enemy ships sunk!');
+      this.updateGameMessage('VICTORY!');
       this.isGameActive = false;
       return;
     }
@@ -315,9 +315,7 @@ export default class UIManager {
     if (!result.gameOver) {
       if (window.innerWidth < 768) {
         // MOBILE: Show result → Switch tab → Wait → Computer attacks
-        this.updateGameMessage(
-          `Attack [${row},${col}]: ${resultText}. Computer is targeting your fleet...`
-        );
+        this.updateGameMessage(`Your attack: ${resultText}`);
 
         // First delay: let player see their attack result
         setTimeout(() => {
@@ -340,7 +338,7 @@ export default class UIManager {
   processComputerTurn() {
     // Step 1: Basic validation
     if (!this.isGameActive || this.game.gameOver) {
-      console.log('Computer turn: Game is not active or has ended');
+      console.log('Computer turn: Game inactive or over');
       return;
     }
     // Step 2: Check if it's actually computer's turn
@@ -361,11 +359,11 @@ export default class UIManager {
     this.renderBoard('human', this.game.human.gameboard, true);
     // Step 6: Update game message
     const resultText = result.result ? result.result.toUpperCase() : 'UNKNOWN';
-    this.updateGameMessage(`Computer attacked: ${resultText}`);
+    this.updateGameMessage(`Enemy's attack: ${resultText}`);
     // Step 7: Check if computer won
     if (result.gameOver && result.winner === 'computer') {
       console.log('Computer won the game!');
-      this.updateGameMessage('💀 DEFEAT! All your ships are sunk!');
+      this.updateGameMessage('DEFEAT!');
       this.isGameActive = false;
       return;
     }
@@ -376,7 +374,7 @@ export default class UIManager {
       if (window.innerWidth < 768) {
         this.switchToBoard('computer');
       }
-      this.updateGameMessage('Your turn! Attack enemy cells.');
+      this.updateGameMessage('Your turn! Attack enemy cells');
     }, 1000);
   }
 }
