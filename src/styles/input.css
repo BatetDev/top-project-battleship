@@ -9,7 +9,6 @@
 @import './components/buttons.css';
 
 @import 'tailwindcss/utilities';
-@import './themes/retro-arcade.css';
 
 @import './layout/mobile.css';
 @import './layout/tablet.css';
