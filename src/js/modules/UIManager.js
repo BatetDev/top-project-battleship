@@ -97,7 +97,7 @@ export default class UIManager {
     this.gameOver = false;
 
     // Always switch to human tab FIRST
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 1024) {
       this.switchToBoard('human');
     }
 
@@ -121,7 +121,7 @@ export default class UIManager {
     // Keep user on their fleet for 2 seconds to view deployment
     setTimeout(() => {
       // Switch to enemy tab on mobile for player's turn
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         this.switchToBoard('computer');
       }
       this.updateGameMessage('Battle started! Your turn.');
@@ -331,7 +331,7 @@ export default class UIManager {
 
     // Step 8: Handle post-attack flow with proper sequencing
     if (!result.gameOver) {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         // MOBILE: Show result → Switch tab → Wait → Computer attacks
         this.updateGameMessage(`Your attack: ${resultText}`);
 
@@ -390,7 +390,7 @@ export default class UIManager {
     // Keep player on their board for 1 second to see computer's attack
     setTimeout(() => {
       // Switch to enemy tab on mobile for player's turn
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         this.switchToBoard('computer');
       }
       this.updateGameMessage('Your turn! Attack enemy cells');

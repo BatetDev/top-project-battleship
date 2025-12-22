@@ -16,14 +16,16 @@
   <body class="min-h-screen px-0 py-8 font-exo">
     <div class="max-w-6xl mx-auto flex-col justify-evenly">
       <!-- Header -->
-      <header class="mb-6">
+      <header
+        class="mb-4 md:flex md:gap-5 justify-center items-center md:flex-wrap"
+      >
         <h1
-          class="flex justify-center items-center gap-1 text-3xl md:text-4xl text-terminal-green font-bold text-center tracking-wide mb-6"
+          class="flex justify-center items-center gap-2 md:gap-3 text-4xl text-terminal-green font-bold text-center tracking-wide mb-4"
         >
           BATTLESHIP
           <i
             data-lucide="ship"
-            class="inline-block w-8 h-8 sm:w-10 sm:h-10 mr-1 self-start"
+            class="inline-block w-10 h-10 md:w-12 md:h-12 mr-1 self-start"
           ></i>
         </h1>
 
@@ -51,7 +53,7 @@
       </div>
 
       <!-- Tabs (Mobile) -->
-      <nav class="md:hidden flex border-b border-terminal-green/30 mb-4">
+      <nav class="xl:hidden flex border-b border-terminal-green/30 mb-4">
         <button
           id="tab-your-fleet"
           class="tab-button active flex-1 py-3"
@@ -69,25 +71,24 @@
       </nav>
 
       <!-- Desktop Boards -->
-      <div class="hidden md:grid md:grid-cols-2 gap-8 mb-8">
+      <div class="hidden xl:grid xl:grid-cols-2 xl:gap-8 mb-8">
         <section class="board-section border-terminal-green/30 lg:mb-0 mb-6">
-          <h2 class="text-terminal-green">Your fleet</h2>
+          <h2 class="text-terminal-green">YOUR FLEET</h2>
           <div id="human-board-desktop" class="board-grid"></div>
         </section>
 
         <section class="board-section border-terminal-green/30 lg:mb-0 mb-6">
-          <h2 class="text-terminal-green">Enemy fleet</h2>
+          <h2 class="text-terminal-green">ENEMY FLEET</h2>
           <div id="computer-board-desktop" class="board-grid"></div>
         </section>
       </div>
 
       <!-- Mobile Boards -->
-      <div class="md:hidden">
+      <div class="xl:hidden">
         <section
           id="human-board-mobile"
           class="board-container active border-terminal-green/30"
         >
-          <h2 class="text-terminal-green text-center my-3">Your fleet</h2>
           <div id="human-board-mobile-grid" class="board-grid"></div>
         </section>
 
@@ -95,7 +96,6 @@
           id="computer-board-mobile"
           class="board-container hidden border-terminal-green/30"
         >
-          <h2 class="text-terminal-green text-center my-3">Enemy fleet</h2>
           <div id="computer-board-mobile-grid" class="board-grid"></div>
         </section>
       </div>
@@ -103,7 +103,7 @@
 
     <!-- Footer -->
     <footer
-      class="mt-8 md:mt-10 text-center text-terminal-green/60 text-sm md:text-base"
+      class="mt-8 md:mt-10 text-center text-terminal-green/60 text-base md:text-lg"
     >
       <a
         href="https://github.com/BatetDev/top-project-battleship"
@@ -112,7 +112,7 @@
         rel="noopener noreferrer"
       >
         <span class="font-medium">By BatetDev</span>
-        <i data-lucide="github" class="w-5 h-5"></i>
+        <i data-lucide="github" class="w-5 h-5 md:w-6 md:h-6"></i>
       </a>
     </footer>
   </body>

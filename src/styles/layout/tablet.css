@@ -1,13 +1,44 @@
-@media (min-width: 640px) and (max-width: 1023px) {
+/* Tablet: 768px - 1023px */
+@media (min-width: 768px) and (max-width: 1099px) {
+  #game-status {
+    min-height: 2em !important;
+    font-size: 0.975rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
   .board-grid {
-    gap: 0.375rem;
-    min-height: 320px;
+    min-height: 280px !important;
+    gap: 0.25rem !important;
+    padding: 0.75rem !important;
   }
+
+  .tab-button {
+    @apply py-3 text-sm !important;
+  }
+
   .board-section {
-    @apply p-4;
+    @apply p-3 !important;
   }
-  /* Stack boards vertically on tablet */
-  .md\:grid-cols-2 {
-    grid-template-columns: 1fr !important;
+
+  .board-section h2 {
+    font-size: 1rem !important;
+    @apply mb-3 !important;
+  }
+
+  .cell svg {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  header {
+    @apply mb-4 !important;
+  }
+
+  h1 {
+    @apply text-3xl mb-0 !important;
+  }
+
+  footer {
+    @apply mt-4 text-sm !important;
   }
 }
