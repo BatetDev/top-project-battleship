@@ -6,9 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        pixel: ['"Press Start 2P"', 'monospace'],
-        display: ['"Press Start 2P"', 'monospace'],
-        serif: ['"Press Start 2P"', 'monospace'],
+        exo: ['Exo 2', 'sans-serif'],
+        sans: ['Exo 2', 'sans-serif'],
       },
       gridTemplateColumns: {
         10: 'repeat(10, minmax(0, 1fr))',

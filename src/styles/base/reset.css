@@ -1,5 +1,5 @@
 body {
-  @apply bg-black text-terminal-green font-pixel m-0 p-3;
+  @apply bg-black text-terminal-green m-0 p-3;
   min-height: 100vh;
   overflow-x: hidden;
 }

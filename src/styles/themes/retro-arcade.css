@@ -7,7 +7,7 @@
 
 #new-game-btn {
   @apply bg-terminal-green-dim hover:bg-terminal-green 
-         text-black font-pixel font-bold py-2 px-4 rounded-none 
+         text-black font-bold py-2 px-4 rounded-none 
          border-2 border-terminal-green transition-colors 
          uppercase tracking-wider text-sm;
   text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);

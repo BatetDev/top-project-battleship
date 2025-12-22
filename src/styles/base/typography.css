@@ -1,11 +1,12 @@
 html {
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 500;
 }
 
 h1,
 h2,
 h3,
-.tab-button {
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.tab-button,
+#new-game-btn {
+  font-weight: 700;
 }

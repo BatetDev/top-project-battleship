@@ -22,7 +22,7 @@
   z-index: 1;
 }
 .board-section h2 {
-  @apply font-pixel font-bold mb-3 md:mb-4 text-terminal-green uppercase tracking-wider;
+  @apply font-bold mb-3 md:mb-4 text-terminal-green uppercase tracking-wider;
   font-size: clamp(0.85rem, 3.5vw, 1.1rem);
   text-shadow: 0 0 10px #00ff00;
   letter-spacing: 2px;
