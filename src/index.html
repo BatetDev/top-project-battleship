@@ -13,23 +13,20 @@
     <link rel="stylesheet" href="./styles/output.css" />
     <title>Project: Battleship</title>
   </head>
-  <body class="min-h-screen px-0 py-8 font-exo">
-    <div class="max-w-6xl mx-auto flex-col justify-evenly">
-      <!-- Header -->
-      <header
-        class="mb-4 md:flex md:gap-5 justify-center items-center md:flex-wrap"
-      >
+  <body class="min-h-screen px-0 py-6 font-exo">
+    <header class="max-w-6xl mx-auto mb-6">
+      <div class="md:flex md:gap-5 justify-center items-center md:flex-wrap">
         <h1
-          class="flex justify-center items-center gap-2 md:gap-3 text-4xl text-terminal-green font-bold text-center tracking-wide mb-4"
+          class="flex justify-center items-center gap-2 md:gap-3 text-4xl text-terminal-green font-bold text-center tracking-wide"
         >
           BATTLESHIP
           <i
             data-lucide="ship"
-            class="inline-block w-10 h-10 md:w-12 md:h-12 mr-1 self-start"
+            class="inline-block w-10 h-10 md:w-12 md:h-12 self-start"
           ></i>
         </h1>
 
-        <div class="flex items-center justify-center gap-1">
+        <div class="flex items-center justify-center gap-1 mt-4 md:mt-0">
           <button
             id="new-game-btn"
             class="font-exo"
@@ -39,25 +36,32 @@
               data-lucide="play"
               class="inline-block w-3 h-3 sm:w-4 sm:h-4 mr-1"
             ></i>
-            NEW GAME
+            START
           </button>
         </div>
-      </header>
+      </div>
+    </header>
 
+    <main class="max-w-6xl mx-auto" role="main">
       <!-- Status -->
       <div
         id="game-status"
-        class="text-center text-terminal-green mb-4 text-lg flex justify-center items-center gap-1.5 min-h-[2.5em] tracking-wider drop-shadow-[0_0_8px_rgba(0,255,0,0.4)]"
+        class="text-center text-terminal-green mb-4 text-lg flex justify-center items-center gap-1.5 min-h-[1.75em] tracking-wider drop-shadow-[0_0_8px_rgba(0,255,0,0.4)]"
       >
         Ready for battle! Deploy your fleet.
       </div>
 
-      <!-- Tabs (Mobile) -->
-      <nav class="xl:hidden flex border-b border-terminal-green/30 mb-4">
+      <!-- Tabs (Mobile/Tablet) -->
+      <nav
+        class="xl:hidden flex border-b border-terminal-green/30 mb-4"
+        role="tablist"
+      >
         <button
           id="tab-your-fleet"
           class="tab-button active flex-1 py-3"
           data-board="human"
+          role="tab"
+          aria-selected="true"
         >
           YOUR FLEET
         </button>
@@ -65,6 +69,8 @@
           id="tab-enemy-fleet"
           class="tab-button flex-1 py-3"
           data-board="computer"
+          role="tab"
+          aria-selected="false"
         >
           ENEMY FLEET
         </button>
@@ -72,38 +78,66 @@
 
       <!-- Desktop Boards -->
       <div class="hidden xl:grid xl:grid-cols-2 xl:gap-8 mb-8">
-        <section class="board-section border-terminal-green/30 lg:mb-0 mb-6">
-          <h2 class="text-terminal-green">YOUR FLEET</h2>
-          <div id="human-board-desktop" class="board-grid"></div>
+        <section
+          class="board-section border-terminal-green/30"
+          aria-label="Your fleet board"
+        >
+          <h2 class="text-terminal-green sr-only">YOUR FLEET</h2>
+          <div
+            id="human-board-desktop"
+            class="board-grid"
+            role="grid"
+            aria-label="Your fleet grid"
+          ></div>
         </section>
 
-        <section class="board-section border-terminal-green/30 lg:mb-0 mb-6">
-          <h2 class="text-terminal-green">ENEMY FLEET</h2>
-          <div id="computer-board-desktop" class="board-grid"></div>
+        <section
+          class="board-section border-terminal-green/30"
+          aria-label="Enemy fleet board"
+        >
+          <h2 class="text-terminal-green sr-only">ENEMY FLEET</h2>
+          <div
+            id="computer-board-desktop"
+            class="board-grid"
+            role="grid"
+            aria-label="Enemy fleet grid"
+          ></div>
         </section>
       </div>
 
-      <!-- Mobile Boards -->
+      <!-- Mobile/Tablet Boards -->
       <div class="xl:hidden">
         <section
           id="human-board-mobile"
           class="board-container active border-terminal-green/30"
+          aria-label="Your fleet board"
         >
-          <div id="human-board-mobile-grid" class="board-grid"></div>
+          <div
+            id="human-board-mobile-grid"
+            class="board-grid"
+            role="grid"
+            aria-label="Your fleet grid"
+          ></div>
         </section>
 
         <section
           id="computer-board-mobile"
           class="board-container hidden border-terminal-green/30"
+          aria-label="Enemy fleet board"
         >
-          <div id="computer-board-mobile-grid" class="board-grid"></div>
+          <div
+            id="computer-board-mobile-grid"
+            class="board-grid"
+            role="grid"
+            aria-label="Enemy fleet grid"
+          ></div>
         </section>
       </div>
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer
-      class="mt-8 md:mt-10 text-center text-terminal-green/60 text-base md:text-lg"
+      class="max-w-6xl mx-auto mt-4 md:mt-8 text-center text-terminal-green/60 text-base md:text-lg"
     >
       <a
         href="https://github.com/BatetDev/top-project-battleship"
