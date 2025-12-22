@@ -15,15 +15,9 @@ module.exports = {
       colors: {
         'terminal-green': '#00FF00',
         'terminal-green-dim': '#00AA00',
-        'terminal-amber': '#FF9900',
-        'grid-color': '#333333',
-        'ship-color': '#00AAFF',
-        'hit-color': '#FF0000',
-        'miss-color': '#666666',
-      },
-      animation: {
-        scanline: 'scanline 10s linear infinite',
-        'pulse-slow': 'pulse 2s ease-in-out infinite',
+        'terminal-green-very-dim': '#006600',
+        'terminal-red': '#FF5555',
+        'terminal-red-dim': '#FF2222',
       },
     },
   },

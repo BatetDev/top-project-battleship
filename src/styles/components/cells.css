@@ -16,74 +16,54 @@
 
 .cell-empty svg {
   @apply w-5 h-5 sm:w-6 sm:h-6;
-  opacity: 0.3;
+  opacity: 0.2;
   stroke: #00aa00;
 }
 
 .cell-ship svg {
-  @apply w-6 h-6 sm:w-8 sm:h-8;
-  opacity: 0.8;
+  @apply w-5 h-5 sm:w-6 sm:h-6;
+  opacity: 0.7;
   stroke: #00aa00;
-}
-
-.cell-hit svg {
-  @apply w-6 h-6 sm:w-8 sm:h-8;
-  opacity: 0.9;
-  stroke: #ff0000;
-  filter: drop-shadow(0 0 4px rgba(255, 0, 0, 0.5));
-  animation: red-glow-pulse 2s ease-in-out infinite;
-  box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
 }
 
 .cell-miss svg {
-  @apply w-6 h-6 sm:w-8 sm:h-8;
-  opacity: 0.6;
+  @apply w-5 h-5 sm:w-6 sm:h-6;
+  opacity: 0.5;
   stroke: #00aa00;
 }
 
-.cell-sunk svg {
-  @apply w-6 h-6 sm:w-8 sm:h-8;
+.cell-hit {
+  animation: red-glow-pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(255, 85, 85, 0.4);
+}
+
+.cell-hit svg {
+  @apply w-5 h-5 sm:w-6 sm:h-6;
   opacity: 0.9;
-  stroke: #ff9900;
-  filter: drop-shadow(0 0 6px rgba(255, 153, 0, 0.7));
-  animation: red-glow-pulse 3s ease-in-out infinite;
-  box-shadow: 0 0 12px rgba(255, 0, 0, 0.5);
+  stroke: #ff5555;
 }
 
 .cell-sunk {
-  animation: pulse-slow 2s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(255, 34, 34, 0.3);
+}
+
+.cell-sunk svg {
+  @apply w-5 h-5 sm:w-6 sm:h-6;
+  opacity: 0.7;
+  stroke: #ff2222;
 }
 
 .cell-disabled {
   @apply opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-none;
 }
 
-/* Keyframes for the pulse effect */
+/* Pulse effect */
 @keyframes red-glow-pulse {
   0%,
   100% {
-    box-shadow:
-      0 0 8px rgba(255, 0, 0, 0.3),
-      inset 0 0 4px rgba(255, 0, 0, 0.2);
+    box-shadow: 0 0 8px rgba(255, 85, 85, 0.4);
   }
   50% {
-    box-shadow:
-      0 0 15px rgba(255, 0, 0, 0.5),
-      inset 0 0 8px rgba(255, 0, 0, 0.3);
-  }
-}
-
-/* Adjust for SUNK cells */
-@keyframes red-glow-pulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 10px rgba(255, 0, 0, 0.4),
-      inset 0 0 6px rgba(255, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow:
-      0 0 20px rgba(255, 0, 0, 0.7),
-      inset 0 0 12px rgba(255, 0, 0, 0.5);
+    box-shadow: 0 0 15px rgba(255, 85, 85, 0.6);
   }
 }
