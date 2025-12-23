@@ -16,8 +16,6 @@ export default class UIManager {
 
     // Render empty boards using a temporary game instance
     this.renderEmptyBoards();
-
-    console.log('UIManager: Initialized with empty boards');
   }
 
   // Store DOM element references for easy access
@@ -89,8 +87,6 @@ export default class UIManager {
   }
 
   startNewGame() {
-    console.log('Starting new game...');
-
     // Reset game state
     this.game = new window.Game();
     this.isGameActive = true;
@@ -266,10 +262,6 @@ export default class UIManager {
         }
       }
     });
-
-    console.log(
-      `Rendered ${boardType} board to ${containers.length} container(s)`
-    );
   }
 
   // Update game message display
@@ -311,7 +303,6 @@ export default class UIManager {
     const result = this.game.humanTurn(row, col);
     // Step 4: Check if attack was successful
     if (!result.success) {
-      console.log('Attack failed:', result.message);
       this.updateGameMessage(`Invalid: ${result.message}`);
       return;
     }
@@ -322,7 +313,6 @@ export default class UIManager {
     this.updateGameMessage(`Your attack: ${resultText}!`);
     // Step 7: Check if human won
     if (result.gameOver && result.winner === 'human') {
-      console.log('Human won the game!');
       this.updateGameMessage('VICTORY!');
       this._showGameOverEffect('victory');
       this.isGameActive = false;
@@ -356,20 +346,16 @@ export default class UIManager {
   processComputerTurn() {
     // Step 1: Basic validation
     if (!this.isGameActive || this.game.gameOver) {
-      console.log('Computer turn: Game inactive or over');
       return;
     }
     // Step 2: Check if it's actually computer's turn
     if (this.game.currentPlayer !== this.game.computer) {
-      console.log("Computer turn: Not computer's turn");
       return;
     }
     // Step 3: Execute computer turn
     const result = this.game.computerTurn();
-    console.log('Computer turn result:', result);
     // Step 4: Check if computer turn was successful
     if (!result.success) {
-      console.log('Computer turn failed:', result.message);
       this.updateGameMessage(`Computer error: ${result.message}`);
       return;
     }
@@ -380,7 +366,6 @@ export default class UIManager {
     this.updateGameMessage(`Enemy's attack: ${resultText}`);
     // Step 7: Check if computer won
     if (result.gameOver && result.winner === 'computer') {
-      console.log('Computer won the game!');
       this.updateGameMessage('DEFEAT!');
       this._showGameOverEffect('defeat');
       this.isGameActive = false;
