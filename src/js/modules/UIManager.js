@@ -1,27 +1,27 @@
 // @ts-nocheck
-import { createIcons, icons } from 'lucide';
-import { ICONS } from './icons.js';
+
 /**
  * Manages all UI interactions for the Battleship game
  * @param {Game} game - The game instance to control
  */
+
+import { createIcons, icons } from 'lucide';
+import { ICONS } from './icons.js';
+
 export default class UIManager {
   constructor(game) {
-    this.game = game; // Game logic instance
+    this.game = game;
     this.isGameActive = false; // Controls UI interactivity
 
-    // Initialize UI components
     this.setupBoardReferences();
     this.setupEventListeners();
     this.setupMobileTabs();
 
-    // Render empty boards using a temporary game instance
     this.renderEmptyBoards();
   }
 
   // Store DOM element references for easy access
   setupBoardReferences() {
-    // Board containers
     this.humanBoardDesktop = document.getElementById('human-board-desktop');
     this.computerBoardDesktop = document.getElementById(
       'computer-board-desktop'
@@ -31,11 +31,9 @@ export default class UIManager {
       'computer-board-mobile-grid'
     );
 
-    // UI elements
     this.gameMessage = document.getElementById('game-status');
     this.newGameBtn = document.getElementById('new-game-btn');
 
-    // Tab elements
     this.tabYourFleet = document.getElementById('tab-your-fleet');
     this.tabEnemyFleet = document.getElementById('tab-enemy-fleet');
 
@@ -51,8 +49,8 @@ export default class UIManager {
     }
   }
 
+  // Setup mobile tab switchingx
   setupMobileTabs() {
-    // Setup mobile tab switching
     if (this.tabYourFleet && this.tabEnemyFleet) {
       this.tabYourFleet.addEventListener('click', () => {
         this.switchToBoard('human');
@@ -87,8 +85,8 @@ export default class UIManager {
     }
   }
 
+  // Reset game state
   startNewGame() {
-    // Reset game state
     this.game = new window.Game();
     this.isGameActive = true;
     this.gameOver = false;
@@ -98,21 +96,17 @@ export default class UIManager {
       this.switchToBoard('human');
     }
 
-    // Deploy both fleets
     this.game.placeHumanShips();
     this.game.placeComputerShips();
 
-    // Render boards with ships
     this.renderAllBoards();
 
-    // Update UI state
     this.updateGameMessage('Fleet deployed! Get ready...');
 
-    // Update button text
     if (this.newGameBtn) {
       this.newGameBtn.innerHTML =
         '<i data-lucide="refresh-cw" class="inline-block w-5 h-5 sm:w-4 sm:h-4 mr-1"></i> RESTART';
-      createIcons({ icons }); // Re-initialize icons
+      createIcons({ icons });
     }
 
     // Keep user on their fleet for 2 seconds to view deployment
@@ -129,7 +123,6 @@ export default class UIManager {
     // Create a temporary game instance to get empty boards
     const tempGame = new window.Game();
 
-    // Render both boards (they'll be empty by default)
     this.renderBoard('human', tempGame.human.gameboard, true);
     this.renderBoard('computer', tempGame.computer.gameboard, false);
 
@@ -140,7 +133,7 @@ export default class UIManager {
     if (this.newGameBtn) {
       this.newGameBtn.innerHTML =
         '<i data-lucide="play" class="inline-block w-5 h-5 sm:w-4 sm:h-4 mr-1"></i> START';
-      createIcons({ icons }); // Re-initialize icons
+      createIcons({ icons });
     }
 
     // Set initial tab to human board
@@ -148,10 +141,7 @@ export default class UIManager {
   }
 
   renderAllBoards() {
-    // Render human board to both desktop and mobile
     this.renderBoard('human', this.game.human.gameboard, true);
-
-    // Render computer board to both desktop and mobile
     this.renderBoard('computer', this.game.computer.gameboard, false);
   }
 
