@@ -1,3 +1,7 @@
+// Debug version of index.js with console commands for development
+// Used for: console game debugging, development commands
+// Production version has these console.log statements removed
+
 import '../styles/input.css';
 import { createIcons, icons } from 'lucide';
 
@@ -8,6 +12,11 @@ import UIManager from './modules/UIManager';
 window.Game = Game; // Make Game class globally available for console debugging
 window.game = new Game(); // Create instance
 window.ui = new UIManager(window.game);
+
+console.log('Battleship loaded! Commands:');
+console.log('- ui.startGame()   : Start UI game');
+console.log('- game.startConsoleGame() : Start console game');
+console.log('- game.humanTurn(row, col) : Console game attack');
 
 // Initialize Lucide icons
 const iconSpan = document.getElementById('icon');

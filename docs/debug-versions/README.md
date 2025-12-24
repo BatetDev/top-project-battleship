@@ -4,6 +4,7 @@ This folder contains the original versions of key files with all console logs in
 
 ## Files:
 
+- `index-with-logs.js`: Entry point with console debugging commands
 - `UIManager-with-logs.js`: Original UI manager with debug logging
 - `Game-with-logs.js`: Original game logic with console game functionality
 - `Player-with-logs.js`: Original player/AI logic with debug logs

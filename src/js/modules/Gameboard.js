@@ -51,7 +51,7 @@ export default class Gameboard {
     return coordinates;
   }
 
-  // // Returns true if a ship can be placed at (row, col) without collisions
+  // Returns true if a ship can be placed at (row, col) without collisions
   _canPlaceShip(row, col, orientation, length) {
     const coordinates = this._getShipCoordinates(row, col, orientation, length);
 
