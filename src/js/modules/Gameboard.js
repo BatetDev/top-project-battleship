@@ -1,7 +1,10 @@
 // @ts-nocheck
-
 import Ship from './Ship';
 
+/**
+ * Represents a 10x10 gameboard for Battleship
+ * Manages ship placement, attacks, and game state
+ */
 export default class Gameboard {
   static BOARD_SIZE = 10;
   static ATTACK_RESULT = {
@@ -13,9 +16,9 @@ export default class Gameboard {
   };
 
   constructor() {
-    this.board = Array(Gameboard.BOARD_SIZE) // [empty × 10]
-      .fill(null) // [null, null, null, ...] (10 times)
-      .map(() => Array(Gameboard.BOARD_SIZE).fill(null)); // each null becomes [null x 10]
+    this.board = Array(Gameboard.BOARD_SIZE)
+      .fill(null)
+      .map(() => Array(Gameboard.BOARD_SIZE).fill(null));
     this.missedAttacks = [];
     this.attackedCells = [];
     this.ships = [];
