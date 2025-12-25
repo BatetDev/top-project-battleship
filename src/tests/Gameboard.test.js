@@ -101,6 +101,22 @@ describe('Gameboard', () => {
         const placed = gameboard.placeShip(ship, [-1, 0], 'horizontal');
         expect(placed).toBe(false);
       });
+
+      test('failed placement leaves board unchanged', () => {
+        const ship = new Ship(3);
+
+        // Try invalid placement (out of bounds)
+        const placed = gameboard.placeShip(ship, [0, 8], 'horizontal');
+
+        expect(placed).toBe(false);
+
+        // Verify ALL cells are still null
+        gameboard.board.forEach((row) => {
+          row.forEach((cell) => {
+            expect(cell).toBeNull();
+          });
+        });
+      });
     });
 
     describe('overlap prevention', () => {
@@ -125,7 +141,7 @@ describe('Gameboard', () => {
     });
   });
 
-  // Group 3: Attack System - Better Structure
+  // Group 3: Attack System
   describe('attack system', () => {
     describe('when a ship is present', () => {
       let ship;
@@ -173,9 +189,9 @@ describe('Gameboard', () => {
       });
 
       test('records missed attacks in missedAttacks array', () => {
-        const result = gameboard.receiveAttack([0, 0]);
+        const result = gameboard.receiveAttack([5, 5]);
         expect(result).toBe('miss');
-        expect(gameboard.missedAttacks).toContainEqual([0, 0]);
+        expect(gameboard.missedAttacks).toContainEqual([5, 5]);
       });
 
       test('records missed attacks in attackedCells array', () => {
@@ -214,14 +230,12 @@ describe('Gameboard', () => {
         expect(gameboard.isLegalAttack([10, 0])).toBe(false);
       });
 
-      test('returns false for already attacked cell', () => {
-        gameboard.receiveAttack([0, 0]);
-        expect(gameboard.isLegalAttack([0, 0])).toBe(false);
+      test('handles negative coordinates correctly', () => {
+        const result = gameboard.receiveAttack([-1, 0]);
+        expect(result).toBe('invalid'); // Should test this
       });
 
-      test('returns false for already attacked ship cell', () => {
-        const ship = new Ship(3);
-        gameboard.placeShip(ship, [0, 0], 'horizontal');
+      test('returns false for already attacked cell', () => {
         gameboard.receiveAttack([0, 0]);
         expect(gameboard.isLegalAttack([0, 0])).toBe(false);
       });

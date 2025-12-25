@@ -9,7 +9,12 @@
     "dev": "npm start",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "publish": "npm run predeploy && npm run deploy"
+    "publish": "npm run predeploy && npm run deploy",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose",
+    "test:watchAll": "jest --watchAll"
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,3 @@
-// File: src/tests/Player.test.js
 import Player from '../js/modules/Player';
 import Ship from '../js/modules/Ship';
 import Gameboard from '../js/modules/Gameboard';
@@ -224,28 +223,24 @@ describe('computer player', () => {
         enemyGameboard.receiveAttack = originalReceiveAttack;
       });
 
-      test('skips already attacked cells in queue', () => {
+      test('does not add already attacked cells to queue', () => {
         const ship = new Ship(3);
         enemyGameboard.placeShip(ship, [5, 5], 'horizontal');
 
-        const randomSpy = jest
-          .spyOn(Math, 'random')
-          .mockReturnValueOnce(0.5) // Hit row
-          .mockReturnValueOnce(0.5); // Hit col
-
-        // First hit
-        computer.makeComputerAttack(enemyGameboard);
-
-        // Pre-attack one adjacent cell
+        // Pre-attack adjacent cell BEFORE first hit
         enemyGameboard.receiveAttack([4, 5]);
 
-        // Next attack - computer WILL attack [4,5] (illegal), get "already attacked"
-        // Then should continue to next in queue
+        const randomSpy = jest
+          .spyOn(Math, 'random')
+          .mockReturnValueOnce(0.5) // Hit at [5,5]
+          .mockReturnValueOnce(0.5);
+
+        // First hit - should NOT add [4,5] to queue (already attacked)
         computer.makeComputerAttack(enemyGameboard);
 
-        // Actually attacks [4,5] (returns "already attacked"), then what?
-        // Let's check what the second attack actually was
-        console.log('All attacks:', enemyGameboard.attackedCells);
+        // Queue should have 3 cells, not 4 (skip [4,5])
+        expect(computer.targetQueue).toHaveLength(3);
+        expect(computer.targetQueue).not.toContainEqual([4, 5]);
 
         randomSpy.mockRestore();
       });

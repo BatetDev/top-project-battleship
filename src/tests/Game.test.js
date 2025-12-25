@@ -57,4 +57,28 @@ describe('Game', () => {
       expect(result.success).toBe(false);
     });
   });
+
+  describe('computerTurn', () => {
+    test('switches turn back to human after computer attack', () => {
+      // Start with computer's turn (set currentPlayer to computer)
+      game.currentPlayer = game.computer;
+
+      const result = game.computerTurn();
+
+      // Should switch back to human
+      expect(game.currentPlayer).toBe(game.human);
+      expect(result.success).toBe(true);
+    });
+  });
+
+  test('humanTurn returns gameOver true when computer board all sunk', () => {
+    // Mock: Force computer board to report all ships sunk
+    jest.spyOn(game.computer.gameboard, 'allShipsSunk').mockReturnValue(true);
+
+    const result = game.humanTurn(0, 0);
+
+    expect(result.gameOver).toBe(true);
+    expect(result.winner).toBe('human');
+    expect(game.gameOver).toBe(true);
+  });
 });
