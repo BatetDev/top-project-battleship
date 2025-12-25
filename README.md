@@ -1,63 +1,65 @@
-# Webpack Starter Template
+# 🚢 Project: Battleship
 
-A modern, beginner-friendly webpack starter template for JavaScript projects.
+A classic Battleship game built with vanilla JavaScript as part of **[The Odin Project](https://www.theodinproject.com/lessons/node-path-javascript-battleship)** JavaScript curriculum.
+
+![Battleship Gameplay](./docs/battleship.gif)
+_Gameplay demo._
+
+## 🎮 Live Demo
+
+**[Play Battleship](https://batetdev.github.io/top-project-battleship/)**
 
 ## ✨ Features
 
-- Webpack 5 with separate dev and prod configs
-- Live reloading with webpack-dev-server
-- ESLint and Prettier integration for code quality and formatting
-- CSS and asset (image, favicon) support
-- Organized folder structure (`src/js`, `src/styles`, `src/assets`)
-- Ready for The Odin Project and similar curricula
+- **Smart AI**: Hunt/Target BFS algorithm with intelligent ship tracking
+- **Responsive Design**: Works on desktop and mobile devices
+- **Modern Stack**: Webpack, Tailwind CSS, Jest testing
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ```bash
-# Clone the repo
-git clone [your-repo-url]
-cd webpack-starter-template
-
-# Install dependencies
+# Clone and install
+git clone https://github.com/BatetDev/top-project-battleship.git
+cd top-project-battleship
 npm install
 
-# Start development server
-npm start
-
-# Build for production
-npm run build
+# Development
+npm start           # Start dev server
+npm test            # Run tests
+npm run build       # Production build
+npm run deploy      # Deploy to GitHub Pages
 ```
 
-## 🛠️ Code Quality
-
-- **Lint code:**  
-  `npm run lint`
-- **Auto-fix lint errors:**  
-  `npm run lint:fix`
-- **Format code with Prettier:**  
-  `npm run format`
-- **Check formatting:**  
-  `npm run format:check`
-
-## 📁 Folder Structure
+## 🏗️ Project Structure
 
 ```
 src/
-  js/
-    index.js
-    modules/
-  styles/
-    main.css
-  assets/
-    favicon.ico
-  template.html
-docs/
-  ARCHITECTURE.md
-  DESIGN.md
-  MVP.md
-  ROADMAP.md
+├── js/modules/     # Game logic (Game, Player, Gameboard, Ship)
+├── styles/         # Tailwind CSS
+├── tests/          # Jest test suite
+└── index.html      # Main HTML file
 ```
 
-## 📝 License
+## 🛠️ Built With
 
-ISC
+- JavaScript (ES6+)
+
+- Webpack 5 - Module bundler
+
+- Tailwind CSS - Styling
+
+- Jest - Testing framework
+
+- Lucide Icons - SVG icons
+
+## 📚 About
+
+This project was built as part of The Odin Project's JavaScript curriculum to practice:
+
+- Test-Driven Development with Jest
+
+- Object-Oriented Programming patterns
+
+- BFS AI algorithm implementation
+
+- Modern JavaScript tooling
