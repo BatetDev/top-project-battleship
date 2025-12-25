@@ -5,7 +5,9 @@
  * @param {Game} game - The game instance to control
  */
 
-import { createIcons, icons } from 'lucide';
+import { createIcons, Ship, Play, RefreshCw } from 'lucide';
+const icons = { Ship, Play, RefreshCw };
+
 import { ICONS } from './icons.js';
 
 export default class UIManager {

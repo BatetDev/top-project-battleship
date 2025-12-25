@@ -1,5 +1,6 @@
 import '../styles/input.css';
-import { createIcons, icons } from 'lucide';
+import { createIcons, Anchor, Github } from 'lucide';
+const icons = { Anchor, Github };
 
 import Game from './modules/Game';
 import UIManager from './modules/UIManager';
